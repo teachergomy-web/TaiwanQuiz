@@ -1,673 +1,1144 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>高米補習班｜成績單評語填寫</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Microsoft JhengHei',sans-serif;background:#f5f5f7;color:#1d1d1f;min-height:100vh}
-.wrap{max-width:480px;margin:0 auto;padding:1rem 1rem 2rem}
-.top{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem;padding:.75rem 1rem;background:#fff;border-radius:14px;box-shadow:0 1px 4px rgba(0,0,0,.08)}
-.badge{width:42px;height:42px;border-radius:50%;background:#7F77DD;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:#fff;flex-shrink:0}
-.top h1{font-size:16px;font-weight:600}
-.top p{font-size:12px;color:#6e6e73;margin-top:2px}
-.steps{display:flex;gap:4px;margin-bottom:1rem}
-.step{flex:1;height:4px;border-radius:2px;background:#e5e5ea;transition:background .3s}
-.step.on{background:#7F77DD}
-.card{background:#fff;border-radius:14px;padding:1.1rem;margin-bottom:.75rem;box-shadow:0 1px 3px rgba(0,0,0,.07)}
-.sec-label{font-size:11px;font-weight:600;color:#6e6e73;letter-spacing:.05em;text-transform:uppercase;margin-bottom:.6rem}
-label{font-size:14px;font-weight:500;display:block;margin-bottom:.3rem}
-select,textarea,input[type=text]{width:100%;font-family:inherit;font-size:15px;background:#f5f5f7;border:1.5px solid #e5e5ea;border-radius:10px;padding:.55rem .85rem;outline:none;-webkit-appearance:none;color:#1d1d1f}
-select:focus,textarea:focus,input:focus{border-color:#7F77DD;background:#fff}
-textarea{resize:none;line-height:1.7}
-.mt{margin-top:.75rem}
-.cnt{font-size:12px;color:#aeaeb2;text-align:right;margin-top:.2rem}
-.cnt.warn{color:#ff9f0a}.cnt.over{color:#ff3b30}
-.goal-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:.4rem}
-.gnum{font-size:14px;color:#aeaeb2;padding-top:.58rem;min-width:18px;font-weight:500}
-.gfield{flex:1}
-.del-g{background:none;border:none;cursor:pointer;color:#aeaeb2;font-size:20px;padding:.35rem .2rem;line-height:1}
-.del-g:hover{color:#ff3b30}
-.add-g{background:none;border:1.5px dashed #c7c7cc;border-radius:10px;padding:.45rem 1rem;font-size:13px;color:#6e6e73;cursor:pointer;margin-top:.3rem;width:100%;font-family:inherit}
-.add-g:hover{border-color:#7F77DD;color:#7F77DD}
-.cls-btn{width:100%;text-align:left;padding:.85rem 1rem;display:flex;align-items:center;justify-content:space-between;background:#f5f5f7;border:1.5px solid #e5e5ea;border-radius:12px;cursor:pointer;margin-bottom:.5rem;font-family:inherit;transition:border-color .2s}
-.cls-btn:hover,.cls-btn:active{border-color:#7F77DD;background:#f0f0ff}
-.cls-btn.done{border-color:#30d158;background:#f0fff4}
-.cls-btn .cls-name{font-size:15px;font-weight:500}
-.cls-btn .cls-book{font-size:12px;color:#6e6e73;margin-top:2px}
-.cls-btn .cls-status{font-size:11px;margin-top:3px}
-.cls-arrow{color:#c7c7cc;font-size:20px}
-.stu-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem}
-.stu-name{font-size:17px;font-weight:600}
-.stu-en{font-size:13px;color:#6e6e73;margin-top:1px}
-.stu-prog{font-size:13px;color:#aeaeb2;font-weight:500}
-.prog-bar{height:4px;border-radius:2px;background:#e5e5ea;margin-bottom:.85rem;overflow:hidden}
-.prog-fill{height:100%;background:#7F77DD;border-radius:2px;transition:width .35s}
-.skip-note{font-size:12px;color:#aeaeb2;margin-top:.35rem}
-.saved-tag{font-size:12px;color:#30d158;margin-top:.3rem;display:none}
-.btn-row{display:flex;gap:8px;margin-bottom:.5rem}
-.btn{flex:1;padding:.75rem;background:#fff;border:1.5px solid #e5e5ea;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;font-family:inherit;text-align:center;color:#1d1d1f;transition:background .15s}
-.btn:hover{background:#f5f5f7}.btn:active{transform:scale(.98)}.btn:disabled{opacity:.35;cursor:not-allowed}
-.btn.primary{background:#7F77DD;border-color:#7F77DD;color:#fff}
-.btn.primary:hover{background:#534AB7;border-color:#534AB7}
-.btn.save-draft{background:#fff;border-color:#7F77DD;color:#7F77DD}
-.btn.save-draft:hover{background:#f0f0ff}
-.chk-group{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.75rem}
-.chk-item{display:flex;align-items:center;gap:.6rem;font-size:14px;font-weight:400;padding:.35rem 0}
-.chk-item input[type=checkbox]{width:20px;height:20px;accent-color:#7F77DD;flex-shrink:0;cursor:pointer}
-.radio-group{display:flex;gap:1rem;margin-bottom:.75rem}
-.radio-item{display:flex;align-items:center;gap:.5rem;font-size:15px;font-weight:500;cursor:pointer}
-.radio-item.pass{color:#30d158}
-.radio-item.fail{color:#ff3b30}
-.radio-item input{width:18px;height:18px;cursor:pointer}
-.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.75rem}
-.score-item{background:#f5f5f7;border-radius:8px;padding:.5rem .75rem;display:flex;justify-content:space-between;align-items:center}
-.score-item .s-name{font-size:13px;color:#6e6e73}
-.score-item .s-val{font-size:15px;font-weight:600}
-.score-item .s-val.ok{color:#30d158}
-.score-item .s-val.ng{color:#ff3b30}
-.sig-wrap{border:1.5px solid #e5e5ea;border-radius:12px;overflow:hidden;background:#fff}
-.sig-canvas{width:100%;height:120px;display:block;touch-action:none;cursor:crosshair}
-.sig-toolbar{display:flex;align-items:center;justify-content:space-between;padding:.5rem .75rem;background:#f5f5f7;border-top:1px solid #e5e5ea}
-.clear-s{background:none;border:none;cursor:pointer;font-size:13px;color:#6e6e73;font-family:inherit;padding:.2rem .4rem}
-.has-sig-tag{font-size:12px;color:#30d158}
-.summary-row{display:flex;justify-content:space-between;align-items:center;padding:.45rem 0;border-bottom:1px solid #f2f2f7;font-size:14px}
-.summary-row:last-child{border:none}
-.summary-row .k{color:#6e6e73}.summary-row .v{font-weight:500;text-align:right}
-.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);background:#1d1d1f;color:#fff;padding:.6rem 1.2rem;border-radius:20px;font-size:13px;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;z-index:999}
-.toast.show{opacity:1}
-.success-card{background:#f0fff4;border:1.5px solid #30d158;border-radius:14px;padding:1.4rem;text-align:center;margin-bottom:.75rem}
-.success-card .icon{font-size:32px;margin-bottom:.5rem}
-.success-card h2{font-size:17px;font-weight:600;color:#1d7a3a;margin-bottom:.3rem}
-.success-card p{font-size:13px;color:#30d158}
-.err-msg{background:#fff0f0;border:1.5px solid #ff3b30;border-radius:10px;padding:.75rem 1rem;color:#c0392b;font-size:13px;display:none;margin-bottom:.5rem}
-.loading-overlay{display:none;position:fixed;inset:0;background:rgba(255,255,255,.8);align-items:center;justify-content:center;z-index:100;font-size:14px;color:#6e6e73;flex-direction:column;gap:.75rem}
-.loading-overlay.show{display:flex}
-.spinner{width:32px;height:32px;border:3px solid #e5e5ea;border-top-color:#7F77DD;border-radius:50%;animation:spin .8s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.draft-banner{background:#fff8e6;border:1.5px solid #ff9f0a;border-radius:10px;padding:.6rem 1rem;font-size:13px;color:#b8740a;margin-bottom:.75rem;display:none}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寶島全攻略</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 童趣可愛的字體與基礎設定 */
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+        
+        body {
+            font-family: 'Nunito', 'Microsoft JhengHei', sans-serif;
+            background-color: #f0fdf4;
+            background-image: radial-gradient(#bbf7d0 2px, transparent 2px);
+            background-size: 30px 30px;
+            color: #334155;
+            user-select: none;
+        }
+
+        /* 立體按鈕樣式 */
+        .btn-cute {
+            transition: all 0.1s;
+            box-shadow: 0 6px 0 rgba(0,0,0,0.1);
+        }
+        .btn-cute:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.1);
+        }
+
+        .btn-option {
+            box-shadow: 0 4px 0 #cbd5e1;
+        }
+        .btn-option:active {
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #cbd5e1;
+        }
+
+        /* 卡片彈出動畫 */
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop {
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        /* 隱藏元素用的class */
+        .hidden-screen {
+            display: none !important;
+        }
+    </style>
 </head>
-<body>
-<div class="wrap">
-  <div class="top">
-    <div class="badge">高米</div>
-    <div><h1>成績單評語填寫</h1><p id="pageSubtitle">選擇老師與月份</p></div>
-  </div>
-  <div class="steps" id="stepBar"></div>
+<body class="min-h-screen flex items-center justify-center p-4 md:p-6">
 
-  <!-- P1：老師 -->
-  <div id="page1">
-    <div class="card">
-      <div class="sec-label">基本資訊</div>
-      <label>老師</label>
-      <select id="teacherSel">
-        <option value="">請選擇...</option>
-        <option value="Su">Su 老師</option>
-        <option value="Amanda">Amanda 老師</option>
-      </select>
-      <div class="mt" id="monthRow">
-        <label>月份</label>
-        <div id="monthDisplay" style="font-size:15px;font-weight:600;color:#7F77DD;background:#f0f0ff;border:1.5px solid #c5c2f0;border-radius:10px;padding:.55rem .85rem"></div>
-        <input type="hidden" id="monthVal">
-      </div>
-      <!-- 升級考模式顯示：班級和考試日期 -->
-      <div id="ltInfoRow" style="display:none;margin-top:.75rem">
-        <label>班級（升級考）</label>
-        <div id="ltClsDisplay" style="font-size:15px;font-weight:600;color:#7F77DD;background:#f0f0ff;border:1.5px solid #c5c2f0;border-radius:10px;padding:.55rem .85rem"></div>
-        <label style="margin-top:.5rem">考試日期</label>
-        <div id="ltDateDisplay" style="font-size:15px;color:#1d1d1f;background:#f5f5f7;border:1.5px solid #e5e5ea;border-radius:10px;padding:.55rem .85rem"></div>
-      </div>
-    </div>
-    <div class="btn-row"><button class="btn primary" onclick="goP2()">下一步 →</button></div>
-  </div>
-
-  <!-- P2：選班級 -->
-  <div id="page2" style="display:none">
-    <div class="card">
-      <div class="sec-label">選擇班級</div>
-      <div id="clsList"></div>
-    </div>
-    <div class="btn-row"><button class="btn" onclick="show(1)">← 返回</button></div>
-  </div>
-
-  <!-- P3：教學目標（月成績單模式） -->
-  <div id="page3" style="display:none">
-    <div class="draft-banner" id="draftBanner3">📝 找到草稿，已自動帶入上次填寫的內容</div>
-    <div class="card">
-      <div class="stu-header">
-        <div><div class="stu-name" id="clsTitle3"></div><div class="stu-en">教學目標（全班共用）</div></div>
-      </div>
-      <div class="sec-label">每項最多 44 字，可填 1–3 項</div>
-      <div id="goalList"></div>
-      <button class="add-g" id="addGBtn" onclick="addGoal()">＋ 新增項目</button>
-    </div>
-    <div class="btn-row">
-      <button class="btn" onclick="show(2)">← 返回</button>
-      <button class="btn primary" onclick="goP4()">下一步 →</button>
-    </div>
-  </div>
-
-  <!-- P4：學生評語 -->
-  <div id="page4" style="display:none">
-    <div class="draft-banner" id="draftBanner4">📝 找到草稿，已自動帶入上次填寫的內容</div>
-    <div class="card">
-      <div class="stu-header">
-        <div><div class="stu-name" id="stuName"></div><div class="stu-en" id="stuEn"></div></div>
-        <div class="stu-prog" id="stuProg"></div>
-      </div>
-      <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
-
-      <!-- 升級考區塊 -->
-      <div id="ltSection" style="display:none">
-        <div class="sec-label">升級考成績</div>
-        <div class="score-grid" id="ltScores"></div>
-        <div class="sec-label">學習總評（可多選）</div>
-        <div class="chk-group">
-          <label class="chk-item"><input type="checkbox" id="chk_neat">字體工整、請繼續保持</label>
-          <label class="chk-item"><input type="checkbox" id="chk_pronounce">發音標準、說寫流利</label>
-          <label class="chk-item"><input type="checkbox" id="chk_vocab">單字背誦能力佳</label>
-          <label class="chk-item"><input type="checkbox" id="chk_attitude">上課態度認真積極</label>
-          <label class="chk-item"><input type="checkbox" id="chk_express">學習能力強、勇於表達</label>
+    <!-- 主容器 -->
+    <div class="max-w-3xl md:max-w-4xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border-4 border-white relative flex flex-col h-[95vh] md:h-[90vh]">
+        
+        <!-- 頂部資訊列 (遊戲中顯示) -->
+        <div id="header-bar" class="bg-yellow-300 p-4 md:p-6 flex justify-between items-center rounded-t-2xl hidden-screen">
+            <div id="week-title" class="font-black text-yellow-900 text-lg md:text-2xl truncate max-w-[200px] md:max-w-[400px]">
+                第一周
+            </div>
+            <button onclick="backToMenu()" class="text-yellow-800 font-bold bg-yellow-400 hover:bg-yellow-500 px-4 py-2 md:px-6 md:py-3 md:text-xl rounded-full text-sm">
+                回主選單
+            </button>
         </div>
-        <div class="sec-label">評鑑結果</div>
-        <div class="radio-group">
-          <label class="radio-item pass"><input type="radio" name="ltResult" value="pass"> 過關升級</label>
-          <label class="radio-item fail"><input type="radio" name="ltResult" value="fail"> 無法升級</label>
+
+        <!-- ================= 畫面 1: 首頁 ================= -->
+        <div id="screen-home" class="p-8 md:p-16 text-center flex flex-col items-center justify-center flex-1">
+            <div class="text-6xl md:text-8xl mb-4 md:mb-8 animate-bounce">💡</div>
+            <h1 class="text-4xl md:text-6xl font-black text-green-600 mb-4 drop-shadow-md">寶島全攻略</h1>
+            <p class="text-gray-500 mb-8 md:mb-12 font-bold md:text-2xl">玩遊戲，認識我們可愛的家鄉！</p>
+            
+            <button onclick="showScreen('screen-select')" class="btn-cute bg-orange-400 text-white text-2xl md:text-4xl font-black py-4 px-10 md:py-6 md:px-16 rounded-full w-full max-w-md">
+                開始探險 🚀
+            </button>
         </div>
-      </div>
 
-      <div class="sec-label">評語（最多 230 字）</div>
-      <textarea id="commentTa" rows="5" placeholder="請填寫對這位學生的整體評語..." oninput="updateCnt(this,'cmtCnt',230)"></textarea>
-      <div class="cnt" id="cmtCnt">0 / 230 字</div>
-      <div class="skip-note">可暫時跳過，完成全班後才能送出</div>
-      <div class="saved-tag" id="savedTag">✓ 已暫存</div>
-    </div>
-
-    <div class="btn-row">
-      <button class="btn" id="prevBtn" onclick="moveStu(-1)">← 上一位</button>
-      <button class="btn primary" id="nextBtn" onclick="moveStu(1)">下一位 →</button>
-    </div>
-    <div class="btn-row">
-      <button class="btn" id="editGoalBtn" onclick="goEditGoals()" style="display:none">✎ 修改教學目標</button>
-      <button class="btn save-draft" onclick="saveDraft()">💾 暫存草稿</button>
-    </div>
-  </div>
-
-  <!-- P5：簽名 + 確認 -->
-  <div id="page5" style="display:none">
-    <div class="card">
-      <div class="sec-label">手寫簽名</div>
-      <div class="sig-wrap">
-        <canvas class="sig-canvas" id="sigC" width="800" height="240"></canvas>
-        <div class="sig-toolbar">
-          <span style="font-size:12px;color:#aeaeb2">用手指在框內簽名</span>
-          <div style="display:flex;align-items:center;gap:12px">
-            <span class="has-sig-tag" id="hasSigTag" style="display:none">✓ 已簽名</span>
-            <button class="clear-s" onclick="clearSig()">清除重簽</button>
-          </div>
+        <!-- ================= 畫面 2: 選擇周次 ================= -->
+        <div id="screen-select" class="p-6 md:p-12 hidden-screen flex flex-1 flex-col">
+            <h2 class="text-2xl md:text-4xl font-black text-center text-blue-600 mb-6 md:mb-10">請選擇挑戰主題 🎯</h2>
+            <div id="category-list" class="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
+                <!-- 由 JS 動態產生選項 -->
+            </div>
         </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="sec-label">確認資料</div>
-      <div id="summaryRows"></div>
-    </div>
-    <div class="err-msg" id="errMsg"></div>
-    <div class="btn-row">
-      <button class="btn" onclick="backToStu()">← 返回</button>
-      <button class="btn primary" id="submitBtn" onclick="submitAll()">送出完成 ✓</button>
-    </div>
-  </div>
 
-  <!-- P6：送出成功 -->
-  <div id="page6" style="display:none">
-    <div class="success-card">
-      <div class="icon">✅</div>
-      <h2>這班評語已送出！</h2>
-      <p id="successDetail"></p>
-    </div>
-    <div class="card">
-      <div class="sec-label">繼續填寫其他班級</div>
-      <div id="remainClsList"></div>
-    </div>
-    <div class="btn-row" style="margin-top:.5rem">
-      <button class="btn" onclick="show(2)">← 回到班級選擇</button>
-    </div>
-  </div>
+        <!-- ================= 畫面 3: 遊戲問答 ================= -->
+        <div id="screen-game" class="p-4 md:p-8 hidden-screen flex flex-1 flex-col relative overflow-y-auto">
+            <div class="mb-2 md:mb-6 text-center">
+                <span class="inline-block bg-blue-100 text-blue-800 px-4 py-1 md:px-6 md:py-2 rounded-full text-sm md:text-xl font-bold mb-2 md:mb-3">
+                    第 <span id="question-counter">1</span> / <span id="total-questions">?</span> 題
+                </span>
+                <h3 id="question-text" class="text-lg md:text-2xl font-bold text-gray-800 min-h-[60px] md:min-h-[80px] flex items-center justify-center">
+    題目載入中...
+</h3>
+
+<div id="image-container" class="hidden mb-4 flex justify-center">
+    <img id="question-image" src="" class="max-h-48 md:max-h-64 rounded-xl shadow-md border-4 border-white">
 </div>
 
-<!-- Loading -->
-<div class="loading-overlay" id="loadingOverlay">
-  <div class="spinner"></div>
-  <span id="loadingText">處理中...</span>
-</div>
+            <!-- 選項區 -->
+            <div id="options-container" class="space-y-3 md:space-y-4 flex-1 flex flex-col justify-center max-w-2xl mx-auto w-full pb-4">
+            </div>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+            <!-- 解答與解析覆蓋層 (預設隱藏) -->
+            <div id="result-overlay" class="absolute inset-0 bg-white/95 z-10 hidden-screen flex flex-col items-center justify-center p-6 animate-pop overflow-y-auto w-full text-center">
+                <div id="result-icon" class="text-5xl md:text-7xl mb-2 md:mb-4 mt-auto mx-auto w-full text-center">⭕</div>
+                <h2 id="result-title" class="text-3xl md:text-5xl font-black mb-2 md:mb-4 text-green-500 w-full text-center">答對了！</h2>
+                <div class="bg-gray-50 border-2 border-gray-200 rounded-xl p-4 md:p-6 w-full max-w-2xl flex flex-col items-center justify-center text-center mb-4 md:mb-8 mx-auto">
+                    <p class="font-bold text-gray-500 text-sm md:text-xl mb-2 w-full text-center">💡 知識補給站</p>
+                    <p id="explanation-text" class="text-gray-700 md:text-xl w-full text-center">這裡是解析內容...</p>
+                </div>
 
-<script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzKgnCmcBH_CJcdtZx_XkZ07nvfKPc9Y-xGUn-ahgXMKcSeCVBBwZKAmjexxYsNBOW8/exec';
+                <!-- 答錯時顯示下一題按鈕 -->
+                <button id="btn-next-wrong" onclick="nextQuestion()" class="btn-cute bg-gray-400 text-white font-bold py-3 px-8 md:py-4 md:px-16 md:text-2xl rounded-full w-full max-w-md hidden-screen mb-auto mx-auto">
+                    下一題 ⏭️
+                </button>
 
-const TEACHER_CLASSES = {
-  Su:     [['A班','文法3'],['C班','文法1'],['E班','發音4'],['G班','發音2'],['H班','發音1']],
-  Amanda: [['B班','文法2'],['D班','文法1'],['F班','發音4']],
-};
-const STUDENTS = {
-  'A班':[['蔡依岑','Dora'],['林芯妤','Cindy'],['羅健丞','Gary'],['蔡德霖','Derek'],['黃品霏','Penny'],['李睿澄','Ray'],['楊語菲','Ella'],['夏譽慈','Vivian'],['張鈞茗','Ming'],['吳儀婷','Holly'],['鄭楷峰','Kyson'],['蔡凡萱','Sherry'],['葉書廷','Shelly'],['張益誠','Eric']],
-  'B班':[['陳艾鈴','Eileen'],['劉一樂','Elliot'],['許佳瑋','Jerry'],['陳妍希','Mia'],['陳奕亘','Ewan'],['洪秉智','Ben'],['郭宸希','Kacie'],['鄭巧媗','Cherry'],['宋妍欣','Cintia'],['楊喬茵','Joyce'],['蔡依蓁','Dora'],['夏又筑','Judy'],['王鍏','Darwin']],
-  'C班':[['許雅捷','Jane'],['陳彥喆','Andy'],['葉芷廷','Lucy'],['謝宇茿','Dora'],['周楷恩','Ian'],['葉賢','Sam'],['林承祐','York'],['呂亦翔','Fish'],['莊媛淇','Dora'],['陳萱','Mia'],['林祐宇','Yu E'],['莊侑芯','Ciady'],['邱宇廷','Tim'],['潘奕橙','Ethan'],['吳銘右','Mark']],
-  'D班':[['許佳璇','Lily'],['劉冠凜','Daniel'],['鄭茹心','Belle'],['黃家悅','Joanne'],['吳婕羽','Joanna'],['潘彥辰','Pico'],['譚怡仙','Sandy'],['陳瑀賾','Justin'],['陳詩允','Anna'],['吳宥希','Woody'],['李芷褕','Doris'],['潘宥翔','Sean'],['楊芷畇','Una'],['洪誼恬','Eva'],['許晨璦','Candy'],['王佳玉','Jammy']],
-  'E班':[['夏柏謙','Brian'],['陳韋安','Wayne'],['蔡侑廷','YoYo'],['潘崇恩','Ken'],['郭家呈','Daniel'],['謝昇叡','Ryan'],['張詩筠','Sarah'],['林昱崴','Willy']],
-  'F班':[['楊喬閔','Jamie'],['陳榆媗','Anita'],['林禹辰','Max'],['陳民豈','Jason'],['林柏羽','Brady'],['邱盈臻','Candy'],['陳苡媛','ViVi'],['李濰妮','NiNi'],['黃琮淳','Jenny'],['許軒睿','Ray'],['歐家駿','Owen'],['王上允','Evan'],['吳永祥','Shawn']],
-  'G班':[['林巧婕','Jenny'],['許雅姸','Yasmin'],['許莛瑄','Kacie'],['曾泳閎','Hunter'],['胡宗運','Mario'],['蘇裕宏','Sam'],['鄭漢文','Jack'],['楊子欣','Jenny'],['李芮語','Rene'],['蘇子皓','Gino'],['吳永峰','Leo'],['牟巧媃','Angel'],['蔡舜羚','Elsa'],['黃世勛','Joey'],['蔡詠羽','Bella'],['黃俐婷','Bonnie'],['陳彥宇','Derson']],
-  'H班':[['林庭安','Ann'],['陳昱安','Andy'],['楊芷妍','Selina'],['陳妘霏','Fay'],['鍾秉侑','Benny'],['蘇妍婧','Ginny'],['吳坤德','Oswald'],['林芯妘','Susie'],['蔡盛宇','Steven'],['薛育嵋','May'],['周子涵','Hailey'],['黃思諺','Polly'],['陳良佑','Yori'],['滕殷睿','Ray'],['羅品妍','Amy'],['陳語荷','Helly'],['楊櫳博','Ben']],
-};
+                <!-- 答對時顯示機會命運按鈕 -->
+                <div id="chance-fate-container" class="w-full max-w-2xl flex space-x-4 md:space-x-8 hidden-screen mb-auto mx-auto">
+                    <button onclick="drawCard('機會')" class="btn-cute flex-1 bg-purple-500 text-white font-black text-xl md:text-3xl py-3 md:py-6 rounded-2xl border-b-4 border-purple-700">
+                        🌟 機會
+                    </button>
+                    <button onclick="drawCard('命運')" class="btn-cute flex-1 bg-indigo-500 text-white font-black text-xl md:text-3xl py-3 md:py-6 rounded-2xl border-b-4 border-indigo-700">
+                        ❓ 命運
+                    </button>
+                </div>
+            </div>
+        </div>
 
-// 狀態
-let curPage=1, curTeacher='', curCls='', curBook='';
-let goals=[''], comments={}, ltData={}, ltScoreData={};
-let currentStu=0, isLevelTest=false;
-let sigCtx=null, drawing=false, hasSig=false;
-let doneCls=new Set();
-let ltCls='', ltDate='', ltBook='';  // 升級考專用
+        <!-- ================= 畫面 4: 卡片結果 ================= -->
+        <div id="screen-card-result" class="absolute inset-0 bg-yellow-100 z-20 hidden-screen flex flex-col items-center justify-center p-6 md:p-12 animate-pop overflow-y-auto w-full text-center">
+            <div class="my-auto w-full flex flex-col items-center justify-center mx-auto">
+                <h2 id="card-type-title" class="text-2xl md:text-4xl font-black text-yellow-800 mb-6 md:mb-10 bg-yellow-300 px-8 py-3 rounded-full">
+                    機會卡
+                </h2>
+                <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-2xl text-center border-4 border-yellow-300 relative">
+                    <div class="absolute -top-8 left-1/2 transform -translate-x-1/2 text-6xl md:text-7xl">💌</div>
+                    <p id="card-desc" class="text-xl md:text-3xl font-bold text-gray-700 mt-4 md:mt-6">
+                        在夜市撿到100元！
+                    </p>
+                    <div id="card-score" class="text-3xl md:text-5xl font-black mt-4 md:mt-6 text-green-500">
+                        +10 分
+                    </div>
+                </div>
+                <button onclick="nextQuestion()" class="btn-cute mt-8 md:mt-10 bg-blue-500 text-white font-bold py-3 px-10 md:py-4 md:px-16 rounded-full text-xl md:text-2xl w-full max-w-md">
+                    下一題 ⏭️
+                </button>
+            </div>
+        </div>
 
-// 初始化月份
-function initMonth(){
-  const params=new URLSearchParams(window.location.search);
-  let m=params.get('month')||'';
-  if(!m){const now=new Date();now.setMonth(now.getMonth()-1);m=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;}
-  const[y,mo]=m.split('-');
-  document.getElementById('monthVal').value=m;
-  document.getElementById('monthDisplay').textContent=`${y}年 ${parseInt(mo)}月`;
-}
-initMonth();
+        <!-- ================= 畫面 5: 結算畫面 ================= -->
+        <div id="screen-end" class="p-8 md:p-16 text-center flex flex-col items-center justify-center flex-1 hidden-screen">
+            <div class="text-6xl md:text-8xl mb-4 md:mb-8">🎉</div>
+            <h2 class="text-3xl md:text-6xl font-black text-gray-800 mb-4 md:mb-8">本週挑戰完成！</h2>
+            <p class="text-gray-500 mb-8 md:mb-12 font-bold text-xl md:text-3xl">你真是個台灣小達人！</p>
+            
+            <button onclick="backToMenu()" class="btn-cute bg-green-500 text-white text-xl md:text-3xl font-black py-4 px-10 md:py-6 md:px-16 rounded-full w-full max-w-md">
+                挑戰其他主題 🔄
+            </button>
+        </div>
 
-// 升級考模式初始化
-function initLevelTest(){
-  const params=new URLSearchParams(window.location.search);
-  if(params.get('mode')==='leveltest'){
-    isLevelTest=true;
-    ltCls  = params.get('cls')  || '';
-    ltDate = params.get('date') || '';
-    ltBook = params.get('book') || '';
-    try{
-      const raw=params.get('scores');
-      if(raw) ltScoreData=JSON.parse(atob(raw));
-    }catch(e){}
-    // 顯示升級考資訊，隱藏月份
-    document.getElementById('monthRow').style.display='none';
-    document.getElementById('ltInfoRow').style.display='block';
-    document.getElementById('ltClsDisplay').textContent=ltCls+'（'+ltBook+'）';
-    document.getElementById('ltDateDisplay').textContent=ltDate;
-  }
-}
-initLevelTest();
+    </div>
 
-// 步驟條
-function updateStepBar(){
-  const bar=document.getElementById('stepBar');
-  bar.innerHTML='';
-  const total=isLevelTest?4:5;
-  const subs=isLevelTest?['老師','班級','學生評語','簽名確認']:['老師','班級','教學目標','學生評語','簽名確認'];
-  const stepPage=isLevelTest?[1,2,4,5]:[1,2,3,4,5];
-  const cur=stepPage.indexOf(curPage);
-  for(let i=0;i<total;i++){
-    const d=document.createElement('div');
-    d.className='step'+(i<=cur?' on':'');
-    bar.appendChild(d);
-  }
-  document.getElementById('pageSubtitle').textContent=subs[Math.max(0,cur)]||'';
-}
+    <script>
+        // ==========================================
+        // 1. 遊戲資料設定區 (可在此擴充題目與卡片)
+        // ==========================================
+        
+        // 8大分類設定
+        const weeks = [
+            { id: 0, title: "食：台灣的肚子(1)", icon: "🍱", color: "bg-orange-100 border-orange-300 text-orange-800" },
+            { id: 1, title: "食：台灣的肚子(2)", icon: "🧋", color: "bg-amber-100 border-amber-300 text-amber-800" },
+            { id: 2, title: "衣：台灣人的穿搭", icon: "👕", color: "bg-pink-100 border-pink-300 text-pink-800" },
+            { id: 3, title: "住：台灣的家", icon: "🏠", color: "bg-teal-100 border-teal-300 text-teal-800" },
+            { id: 4, title: "行：台灣人的移動", icon: "🚌", color: "bg-blue-100 border-blue-300 text-blue-800" },
+            { id: 5, title: "育：台灣人的學習", icon: "🎒", color: "bg-indigo-100 border-indigo-300 text-indigo-800" },
+            { id: 6, title: "樂：台灣人的休閒(1)", icon: "🏕️", color: "bg-green-100 border-green-300 text-green-800" },
+            { id: 7, title: "樂：台灣人的休閒(2)", icon: "🎤", color: "bg-lime-100 border-lime-300 text-lime-800" }
+        ];
 
-function show(n){
-  for(let i=1;i<=6;i++) document.getElementById('page'+i).style.display=i===n?'block':'none';
-  curPage=n; updateStepBar();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
+        // 題目資料庫 
+        const allQuestions = {
+// 第一週：水果與植物祕密篇 (共105題)
+            0: [
+                { question: "草莓身上一點一點的小黑點是什麼？", options: ["種子", "真正的果實", "毛孔"], correctIndex: 1, explanation: "那才是真正的果實，紅色的部分是花托。" },
+                { question: "為什麼香蕉通常被裝在「藍色」的塑膠袋裡？", options: ["為了美觀", "藍色能防蟲和防曬", "讓香蕉變藍色"], correctIndex: 1, explanation: "是一種為了農業保護的「PE套袋」，藍色有助於遮光、防曬、抗寒、防蟲害，並提供穩定的溫濕度，有利於香蕉生長。" },
+                { question: "全世界只有哪裡才產「愛玉」？", options: ["台灣", "日本", "美國"], correctIndex: 0, explanation: "因為只有台灣有「愛玉小蜂」能幫它授粉。" },
+                { question: "鳳梨的「頭」（有葉子的部分）其實是它的哪個部位？", options: ["嘴巴", "屁股", "手臂"], correctIndex: 1, explanation: "養分從下往上傳，所以底部通常比較甜。" },
+                { question: "鳳梨為什麼會「咬舌頭」？", options: ["因為它有牙齒", "因為有鳳梨酵素", "因為它沒洗乾淨"], correctIndex: 1, explanation: "鳳梨會「咬舌頭」主要是因為其含有強力的「鳳梨酵素」（鳳梨蛋白酶）。這種酵素能分解蛋白質，接觸到由蛋白質組成的口腔黏膜和舌頭時，會引起細胞刺激與微小損傷，產生刺痛麻木感。" },
+                { question: "「釋迦」的名字是因為它長得像誰的頭？", options: ["外星人", "釋迦牟尼佛", "菜花"], correctIndex: 1, explanation: "因為外觀長得像釋迦牟尼佛的頭部而得名。" },
+                { question: "芭樂的別名「那拔」是從哪種語言音譯過來的？", options: ["日語", "英語", "西班牙語"], correctIndex: 1, explanation: "來自英文 Guava 的音譯。" },
+                { question: "火龍果其實是哪種植物的果實？", options: ["玫瑰花", "仙人掌", "椰子樹"], correctIndex: 1, explanation: "紅色火龍果其實是仙人掌科三角柱或蛇鞭柱屬的熱帶植物果實，並非長在樹上。" },
+                { question: "哪種水果吃完後，排泄物可能會變紅色？", options: ["紅肉火龍果", "西瓜", "番茄"], correctIndex: 0, explanation: "紅肉火龍果含有大量的天然色素「甜菜紅素」，人體無法完全吸收與分解，色素會隨大小便排出體外，屬正常現象。" },
+                { question: "為什麼木瓜牛奶放久了會變苦？", options: ["木瓜壞掉了", "酵素分解了蛋白質", "糖加太少"], correctIndex: 1, explanation: "木瓜中的「木瓜蛋白酶」會分解牛奶中的蛋白質（酪蛋白），將其分解成小分子的「胜肽」，而這些胜肽帶有明顯的苦味。" },
+                { question: "哪種水果切開來後，形狀看起來像一顆星星？", options: ["蓮霧", "楊桃", "芒果"], correctIndex: 1, explanation: "楊桃橫切面的形狀就像星星一樣，所以英文也叫 Starfruit。" },
+                { question: "「美人腿」是指哪一種蔬菜？", options: ["茭白筍", "大白菜", "茄子"], correctIndex: 0, explanation: "因其外殼剝開後，筍肉白皙、細長且筆直，形狀恰如女性的小腿，故在臺灣被暱稱為「美人腿」。" },
+                { question: "蓮霧最早是由誰引進台灣的？", options: ["鄭成功", "荷蘭人", "日本人"], correctIndex: 1, explanation: "蓮霧最早是由荷蘭人在17世紀（約300多年前）從東南亞引進台灣進行栽種的。" },
+                { question: "西瓜的性別怎麼看？通常哪種比較甜？", options: ["公的", "母的", "都一樣"], correctIndex: 1, explanation: "母的（底部圈圈較大、果蒂較捲）通常比較甜。" },
+                { question: "「破布子」通常用來煮哪種料理？", options: ["蒸魚", "炸雞", "煮珍奶"], correctIndex: 0, explanation: "製作的破布子多用來蒸魚、炒肉末，也可以用來炒、煲湯、調製醬汁等。" },
+                { question: "「芒果的故鄉」通常是指台灣哪個地方？", options: ["玉井", "大湖", "燕巢"], correctIndex: 0, explanation: "玉井以種植愛文芒果聞名，是全台愛文芒果最早種植成功且產量豐富的地區。" },
+                { question: "台灣最常見的「愛文芒果」是從哪國引進的？", options: ["美國", "泰國", "菲律賓"], correctIndex: 0, explanation: "台灣最常見的「愛文芒果」（Irwin）是於 1954 年從美國佛羅里達州引進的。" },
+                { question: "苦瓜為什麼是苦的？", options: ["為了不讓人吃", "含有苦瓜素", "它沒熟"], correctIndex: 1, explanation: "苦瓜含有苦瓜苷以及葫蘆素。強烈的苦味可以作為「天然殺蟲劑」，讓昆蟲不敢隨意啃食。" },
+                { question: "冬瓜雖然名字有個「冬」字，但它其實是哪一個季節盛產的蔬菜呢？", options: ["春天", "夏天", "冬天", "只有過年才有"], correctIndex: 1, explanation: "夏天：它是道地的夏季蔬菜，因為很耐放，可以從夏天一直放到冬天吃。" },
+                { question: "在沒有冷氣的古代，人們夏天睡覺太熱時會怎麼利用大冬瓜？", options: ["把冬瓜切片貼在額頭上", "抱著大冬瓜睡覺消暑", "把冬瓜當成枕頭墊高", "坐在冬瓜上面乘涼"], correctIndex: 1, explanation: "抱著大冬瓜睡覺：冬瓜含水量高，觸感比室溫低，是古代的「天然冷氣」。" },
+                { question: "我們常吃的「鳳梨酥」，為了讓內餡軟Q順口，通常會加入哪種蔬菜做的醬？", options: ["小黃瓜", "南瓜", "冬瓜", "苦瓜"], correctIndex: 2, explanation: "冬瓜：冬瓜醬纖維細、味道甜，是傳統鳳梨酥內餡的好搭檔。" },
+                { question: "冬瓜茶真的是用冬瓜做的嗎？", options: ["是", "不是，是化工原料", "是用西瓜皮做的"], correctIndex: 0, explanation: "是的，正宗的冬瓜茶是將新鮮大冬瓜加糖熬煮出冬瓜糖磚，再加水煮成的。" },
+                { question: "「九層塔」的名字由來是因為？", options: ["它有九層樓高", "花序重疊很多層", "要洗九次"], correctIndex: 1, explanation: "因其開花時，花序重重疊疊，外觀如同寶塔狀，且層數繁多而得名。" },
+                { question: "哪種蔬菜長在水裡，且中秋節前後最盛產？", options: ["茭白筍", "高麗菜", "地瓜", "花椰菜"], correctIndex: 0, explanation: "茭白筍是水生植物，中秋節前後正好是它的盛產期。" },
+                { question: "奇異果（Kiwi）現在很有名，但它的老家其實是在哪裡？", options: ["紐西蘭", "中國（原名奇異莓或獼猴桃）", "澳洲", "印度"], correctIndex: 1, explanation: "中國：奇異果原產於中國，後來傳到紐西蘭才被發揚光大。" },
+                { question: "把蘋果丟進水桶裡，它會發生什麼事？", options: ["沉到水底", "浮在水面上", "像潛水艇一樣停在中間", "飄在空中"], correctIndex: 1, explanation: "浮在水面：因為蘋果有 25% 是空氣，就像自帶救生圈。" },
+                { question: "柚子皮除了當帽子，還可以用來做什麼？", options: ["燃料", "天然防蚊香", "籃球", "橡皮擦"], correctIndex: 1, explanation: "將吃剩的柚子皮徹底曬乾，點燃後會產生不刺鼻的清香，能有效驅趕蚊蟲。" },
+                { question: "葡萄表皮有一層白白的粉（果粉），那是什麼？", options: ["農藥殘留", "沒洗乾淨的灰塵", "葡萄分泌的天然蠟質，用來保護水分"], correctIndex: 2, explanation: "天然蠟質：葡萄表皮的白色粉末是天然的果粉，非農藥殘留，而是葡萄自身分泌的蠟質成分。" },
+                { question: "為什麼以前的船員出海都要帶很多檸檬？", options: ["為了預防壞血病（補充維他命C）", "為了把船洗乾淨", "為了讓魚肉更好吃", "為了養顏美容"], correctIndex: 0, explanation: "預防壞血病：檸檬有豐富的維他命 C，是古代船員的救命仙丹。" },
+                { question: "為什麼水蜜桃的皮膚摸起來「毛茸茸」的，長滿了細細的毛？", options: ["怕冷，所以穿上毛衣保暖", "為了保護自己，防止雨水直接淋濕皮膚或被昆蟲咬", "為了讓人類摸起來覺得很舒服", "那些毛其實是它的頭髮"], correctIndex: 1, explanation: "為了保護自己：這些細毛像是水蜜桃的「天然雨衣」，可以讓水滴滑落，不會讓果實因為太潮濕而爛掉。" },
+                { question: "水蜜桃和哪一種「堅果」其實是親戚，連裡面的硬殼種子都長得很像？", options: ["花生", "核桃", "杏仁（扁桃仁）", "腰果"], correctIndex: 2, explanation: "杏仁（扁桃仁）：水蜜桃和杏仁在植物學上是親戚，裡面的硬核敲開，種子長得跟杏仁非常像。" },
+                { question: "榴槤雖然長在樹上，但它成熟時會發生什麼事？", options: ["會慢慢變透明", "會自己從高高的樹上掉下來", "會像氣球一樣飛上天", "會縮小變成小硬球"], correctIndex: 1, explanation: "自己從樹上掉下來：榴槤成熟時會自動脫落。果農進入榴槤園通常要戴安全帽以免被砸到。" },
+                { question: "為什麼很多飯店、飛機或捷運都規定禁止帶榴槤？", options: ["因為它的刺會刺破椅子", "因為它太重了會讓飛機飛不動", "因為它的味道太濃郁，很多人受不了", "因為它會招來猴子"], correctIndex: 2, explanation: "味道太濃郁：榴槤的味道滲透力超強，在密閉空間散發味道會留很久，所以公共場所禁止攜帶。" },
+                { question: "在森林裡，榴槤強烈的「香味」其實是為了吸引哪些大力士動物來幫它播種？", options: ["蝴蝶和蜜蜂", "紅毛猩猩和大象", "飛鳥和小魚", "穿山甲和松鼠"], correctIndex: 1, explanation: "紅毛猩猩和大象很愛榴槤的味道，吃掉果肉後會帶著種子走到遠方排泄，幫榴槤播種。" },
+                { question: "榴槤被稱為「水果之王」，那你知道誰被稱為「水果之后」，常被說跟榴槤是絕配嗎？", options: ["西瓜", "香蕉", "山竹", "蘋果"], correctIndex: 2, explanation: "山竹：因為榴槤在中醫裡屬「燥熱」，而山竹屬「清涼」，兩者一起吃被認為可以平衡身體的火氣。" },
+                { question: "吃完榴槤後，手上的「榴槤味」很難洗掉，這時候利用榴槤殼的哪一個部位來洗手，可以神奇地把味道除掉？", options: ["用外面尖尖的刺來抓手", "將水倒進殼內側「白色凹槽」處，用裡面的水洗手", "把殼戴在頭上大喊「臭氣消失」", "把殼埋進土裡，把手伸進土裡搓一搓"], correctIndex: 1, explanation: "將水倒進殼內側凹槽洗手。榴槤殼內側白色的部分含有一種天然成分，可以像磁鐵一樣把臭味抓走。" },
+                { question: "請問台灣檸檬的故鄉在哪裡？", options: ["恆春", "拉拉山", "高雄", "屏東"], correctIndex: 3, explanation: "屏東縣九如鄉：因為日照強烈、水質清澈與排水良好的砂質土壤，是全台灣檸檬產量最多的檸檬之鄉。" },
+                { question: "為什麼「愛文芒果」的外皮是紅色的？", options: ["因為它害羞", "為了吸引小鳥", "因為曬過太陽", "因為噴了紅漆"], correctIndex: 2, explanation: "愛文芒果在樹上曬到太陽後，果皮會產生花青素變成漂亮的紅色。" },
+                { question: "台灣水果王國的「夏季三寶」通常是指芒果、荔枝和什麼？", options: ["西瓜", "草莓", "橘子", "柿子"], correctIndex: 0, explanation: "芒果、荔枝、西瓜是台灣夏天最受歡迎的三大水果。" },
+                { question: "哪一種台灣水果曾被稱為「聖女」，其實是番茄的一種？", options: ["大番茄", "聖女小番茄", "桃太郎番茄", "黑柿番茄"], correctIndex: 1, explanation: "聖女小番茄是台灣早年非常著名的品種，甜度高且口感好。" },
+                { question: "為什麼文旦（柚子）採收後要「辭水」（放幾天再吃）？", options: ["為了讓它長大", "讓水分散失，果肉才會變軟、變甜", "為了讓皮變厚", "為了招財"], correctIndex: 1, explanation: "辭水後皮會變皺變黃，但果肉會縮小並集中甜味，變得更好吃。" },
+                { question: "芭樂（番石榴）富含哪一種營養素，含量甚至比檸檬還多？", options: ["鈣質", "維生素 C", "蛋白質", "脂肪"], correctIndex: 1, explanation: "芭樂是水果界的維生素 C 之王，吃芭樂可以有效補充維生素C！" },
+                { question: "下列哪一種水果是「長在樹幹上」的？", options: ["樹葡萄", "西瓜", "葡萄", "草莓"], correctIndex: 0, explanation: "樹葡萄（嘉寶果）的花和果實是直接長在樹幹和主枝上的，看起來密密麻麻的。" },
+                { question: "龍眼和荔枝的差別是什麼？", options: ["龍眼皮黃褐色、荔枝皮紅色", "龍眼比較大", "荔枝有長毛", "沒差別"], correctIndex: 0, explanation: "這是外觀最直觀的區別。龍眼是黃褐色的平滑圓球，荔枝外殼則是偏紅色帶有粗糙顆粒。" },
+                { question: "「東方美人」是一種茶，那「東方美人」也是哪種水果的別名？", options: ["桃子", "柿子", "梨子", "芒果"], correctIndex: 3, explanation: "愛文芒果因為顏色紅艷漂亮、香氣迷人，有時會被形容為水果界的東方美人。" },
+                { question: "番茄在台灣既是水果也是蔬菜，哪一種番茄通常用來「煮湯」？", options: ["聖女小番茄", "玉女番茄", "牛番茄", "櫻桃番茄"], correctIndex: 2, explanation: "牛番茄（大番茄）纖維多、果肉厚，非常適合烹飪燉湯。" },
+                { question: "蓮霧的「臍部」（底部）越開，代表這顆蓮霧：", options: ["越酸", "越甜", "越苦", "還沒熟"], correctIndex: 1, explanation: "底部的四片花萼完全展開且呈現深紅色，通常代表成熟度高，非常甜。" },
+                { question: "什麼水果吃多可能會導致皮膚稍微「變黃」，但多喝水就會好？", options: ["柳丁", "西瓜", "木瓜", "葡萄"], correctIndex: 2, explanation: "木瓜富含胡蘿蔔素，吃過量會暫時累積在皮膚讓皮膚發黃，多喝水代謝掉就好。" },
+                { question: "台灣被稱為「水果王國」，最重要的原因是什麼？", options: ["水果很便宜", "水果長得很大", "氣候好、農民技術高、種類超豐富", "大家都很愛吃"], correctIndex: 2, explanation: "台灣跨越熱帶與亞熱帶，加上超強的農業改良技術，才能一年四季都有各種好吃的優質水果。" },
+                { question: "台灣水果的「產季」通常會因為什麼而改變？", options: ["老師的心情", "氣候與育種技術", "價格", "顏色"], correctIndex: 1, explanation: "農民透過燈照或接枝等農業技術，可以讓水果提前或延後產出。" },
+                { question: "為什麼逛夜市被認為是台灣的文化瑰寶？", options: ["因為食物便宜又多樣", "充滿人情味與在地特色", "展現了台灣人的創意", "以上皆是"], correctIndex: 3, explanation: "夜市集結了台灣的飲食精華與生活縮影，結合了美食、玩樂與人情味！" },
+            { question: "台灣很多老牌夜市都在「廟口」附近，這主要是因為什麼？", options: ["因為神明也想吃消夜", "因為廟裡比較涼快", "因為廟口是以前人潮聚集、聊天的地方", "因為廟裡可以借廚房"], correctIndex: 2, explanation: "以前的人生活重心都在寺廟，大家去拜拜、看戲或聚會，攤販看到哪裡人多就去哪裡擺攤，最後就形成了夜市。" },
+            { question: "以前沒有發財車，攤販會用什麼工具載著食物到處走？", options: ["遙控汽車", "扁擔（用肩膀挑）", "直升機", "把桌子頂在頭上"], correctIndex: 1, explanation: "最早的攤販是「行動餐館」，用一根扁擔挑著爐灶、食材跟餐具，哪裡有慶典就走到哪裡賣。" },
+            { question: "在沒有電燈的古代，夜市攤販用什麼東西來照亮攤位？", options: ["幾萬隻螢火蟲", "電石燈（會發出臭臭的味道）", "螢光棒", "讓大家摸黑吃東西"], correctIndex: 1, explanation: "早期使用電石燈，利用化學反應產生火光，因為味道不好聞，台語又叫它「臭燈仔」。" },
+            { question: "台灣夜市為什麼大多在「晚上」營業？", options: ["因為白天大家要工作、讀書，晚上才有空出來逛街", "因為食物在晚上比較香", "因為晚上不會下雨", "因為晚上警察不抓違規"], correctIndex: 0, explanation: "夜市最初是為了體諒白天辛苦工作的工人跟農民，讓他們在晚上有個放鬆、吃東西的地方。" },
+            { question: "台北著名的「士林夜市」最早是因為靠近哪裡，所以有很多生意人聚集？", options: ["飛機場", "基隆河的小碼頭", "動物園", "警察局"], correctIndex: 1, explanation: "以前士林慈諴宮附近有碼頭，農產品會從這裡進出，人來人往就帶動了夜市的發展。" },
+            { question: "夜市裡常聽到的「叫賣聲」或是老闆「敲敲打打」的聲音，最早是為了什麼？", options: ["為了吵醒睡覺的人", "為了吸引客人的注意", "為了慶祝生日", "因為老闆心情不好"], correctIndex: 1, explanation: "在沒有大喇叭的年代，攤販會用獨特的口號或敲打聲來當作廣告，讓路人知道好吃的東西來了！" },
+            { question: "為什麼有些夜市的小吃（例如擔仔麵）會讓客人「坐矮板凳」吃？", options: ["因為老闆比較矮", "因為矮板凳比較貴", "為了讓客人吃完趕快走", "延續以前路邊攤「挑扁擔、就地而坐」的傳統習慣"], correctIndex: 3, explanation: "這是一種懷舊的傳統，早期挑扁擔的攤位高度很低，大家就坐著矮凳吃，變成了台灣夜市的一種文化特色。" },
+            { question: "台灣夜市現在變得世界聞名，主要是因為它具備什麼特點？", options: ["東西種類多、便宜又好吃", "可以在夜市玩遊戲", "展現了台灣人的熱情", "以上皆是"], correctIndex: 3, explanation: "夜市結合了美食、玩樂與人情味，這就是台灣夜市最大的魅力！" },
+            { question: "傳說中發明臭豆腐的人是清朝的「王致和」，他為什麼會開始賣豆腐呢？", options: ["因為他覺得豆腐長得很漂亮", "因為他進京趕考沒考上，為了生活只好賣豆腐", "因為他想發明豆腐做的玩具", "因為他家門口剛好有一棵豆腐樹"], correctIndex: 1, explanation: "王致和落榜後路費不夠，決定一邊讀書一邊賣豆腐維生，沒想到卻因為醃製發酵的「臭豆腐」而出名！" },
+            { question: "臭豆腐特殊的氣味是來自於什麼過程？", options: ["噴了臭臭粉", "壞掉腐爛", "發酵", "泡過醋水"], correctIndex: 2, explanation: "豆腐泡在由蔬菜、藥材等發酵製成的「臭滷水」中發酵而得。" },
+            { question: "在台灣夜市，炸臭豆腐通常會搭配哪一種配菜來解膩？", options: ["薯條", "台式酸甜泡菜", "冰淇淋", "韓式泡菜"], correctIndex: 1, explanation: "台灣炸臭豆腐的經典拍檔就是用高麗菜醃製的「台式泡菜」，酸甜口感剛好能平衡油膩感。" },
+            { question: "聽說清朝的「慈禧太后」也非常喜歡吃臭豆腐，她給了它一個優雅的名字叫什麼？", options: ["黑珍珠", "臭香香", "御青方", "豆腐王"], correctIndex: 2, explanation: "慈禧太后覺得好吃但名字不好聽，根據它青墨色的外觀，賜名為「御青方」。" },
+            { question: "台灣最著名的「蚵仔煎」，據說最早是因為哪位將軍在缺糧時發明的？", options: ["鄭成功", "施琅", "孫悟空", "關羽"], correctIndex: 0, explanation: "傳說鄭成功與荷蘭作戰時缺糧，利用當地的牡蠣和番薯粉煎成餅吃。" },
+            { question: "蚵仔煎吃起來「黏黏QQ」的口感，主要是因為加了哪一種粉？", options: ["巧克力粉", "麵粉", "番薯粉（地瓜粉）", "泡打粉"], correctIndex: 2, explanation: "番薯粉和水混合後，加熱會變成透明且非常有彈性的樣子，是蚵仔煎靈魂的來源。" },
+            { question: "在夜市看老闆煎蚵仔煎時，除了蚵仔，通常還會加入哪一種「綠色蔬菜」增加口感？", options: ["小黃瓜", "苦瓜", "小白菜（或茼蒿）", "西蘭花"], correctIndex: 2, explanation: "為了營養均衡且口感更豐富，老闆會抓一把小白菜或是冬天限定的茼蒿一起煎。" },
+            { question: "請問下面哪一項最常出現在「台南版」的蚵仔煎裡，但在北部卻很少見？", options: ["小黃瓜", "清脆的豆芽菜", "巧克力", "玉米粒"], correctIndex: 1, explanation: "清脆的豆芽菜是台南蚵仔煎的一大特色，吃起來會多了一種咔滋咔滋的口感！" },
+            { question: "蚵仔煎上面的「紅色甜辣醬」非常重要，它的味道通常是什麼感覺？", options: ["只有苦味", "只有酸味", "酸酸甜甜、微辣", "鹹到要狂喝水"], correctIndex: 2, explanation: "每家店都有秘製醬汁，通常用味噌、番茄醬和糖調配，酸甜的味道能讓海鮮更鮮美。" },
+            { question: "蚵仔煎裡面的主角「蚵仔」，它的本名其實叫什麼？", options: ["螃蟹", "牡蠣", "龍蝦", "海瓜子"], correctIndex: 1, explanation: "蚵仔是台語說法，正式名稱是「牡蠣」，因為營養價值非常高，也有「海中牛奶」的美稱！" },
+            { question: "哪一種夜市飲品被稱為「台灣可樂」，是黑豆發酵或多種植物熬製的飲料？", options: ["仙草蜜", "綠豆湯", "薩士比亞", "仙草茶（或青草茶）"], correctIndex: 3, explanation: "青草茶含有多種本土植物，在早期是台灣人消暑的必備飲料。" },
+            { question: "珍珠奶茶是在哪一個年代的台灣發明出來的？", options: ["明鄭時期", "1980 年代", "去年剛發明", "日治時期"], correctIndex: 1, explanation: "大約在 1980 年代，將傳統點心粉圓加入泡沫紅茶中而爆紅。" },
+            { question: "關於誰才是「珍奶創始店」，台灣有兩間很有名的店都在爭第一，是哪兩間？", options: ["麥當勞和肯德基", "春水堂和翰林茶館", "50嵐和清心", "星巴克和路易莎"], correctIndex: 1, explanation: "台中的「春水堂」與台南的「翰林茶館」都自稱是珍奶發明者，兩間店還因此打過官司呢！" },
+            { question: "剛發明時，珍珠奶茶裡面的珍珠（粉圓）其實有不同的顏色，最早出現的是什麼顏色？", options: ["只有黑色", "白色和黑色", "彩虹色", "透明色"], correctIndex: 1, explanation: "一開始有白珍珠和黑珍珠，後來加入黑糖熬煮的黑粉圓因為看起來像「黑珍珠」，更受大家歡迎。" },
+            { question: "「珍珠奶茶」裡的珍珠（粉圓），主要是由哪種植物的粉做成的？", options: ["麵粉", "樹薯粉", "玉米粉", "太白粉"], correctIndex: 1, explanation: "樹薯粉具有很強的韌性與彈性，這就是粉圓 Q 彈口感的來源。" },
+            { question: "珍珠奶茶為什麼要叫做「珍珠」，而不是「粉圓」奶茶？", options: ["裡面真的放了珠寶", "為了聽起來很華麗、好聽", "因為珍珠可以美白", "因為珍珠是外星人名字"], correctIndex: 1, explanation: "粉圓本來是傳統甜點，為了讓它聽起來更高貴、吸引客人，才改名叫「珍珠」，結果在全球大爆紅！" },
+            { question: "「大腸包小腸」外面的那層「大腸」其實是什麼做的？", options: ["塑膠袋", "糯米跟豬大腸衣", "麵粉", "豆腐皮"], correctIndex: 1, explanation: "是將糯米灌入洗淨的豬大腸衣中蒸熟，再夾入香腸。" },
+            { question: "大腸包小腸在夜市有個很酷的綽號，被稱為什麼？", options: ["台灣熱狗", "台灣漢堡", "台灣披薩", "台灣壽司"], correctIndex: 1, explanation: "因為它是用糯米腸切開夾住香腸，就像漢堡用麵包夾住肉片一樣，所以被稱為「台式漢堡」。" },
+            { question: "「大腸包小腸」最早據說是在台灣哪一個縣市發明，後來才傳遍全台灣的？", options: ["台北市", "高雄市", "花蓮縣和台中一帶", "宜蘭縣"], correctIndex: 2, explanation: "普遍說法是在 1990 年代左右，在花蓮與台中的夜市開始流行這種吃法，迅速爆紅。" },
+            { question: "炭烤大腸包小腸時，老闆通常會在中間夾入哪一種「辛辣」的蔬菜來提味？", options: ["辣椒", "生大蒜（或蒜片）", "苦瓜", "洋蔥"], correctIndex: 1, explanation: "台灣人吃香腸最經典的配備就是「生大蒜」，辛辣的感覺跟甜甜的香腸非常搭！" },
+            { question: "為了讓口感更豐富，除了香腸和糯米腸，中間還會加入哪種脆脆的配菜？", options: ["薯條", "酸菜與小黃瓜", "爆米花", "軟糖"], correctIndex: 1, explanation: "酸菜的鹹香和小黃瓜的清爽，可以完美平衡香腸的油膩感。" },
+            { question: "為什麼大腸包小腸通常是用「紙袋捲起來」裝，而不是用盤子裝？", options: ["為了環保", "為了可以一邊逛街一邊旋轉紙袋推出來吃", "因為盤子太重了", "為了保暖"], correctIndex: 1, explanation: "透過旋轉紙袋底部，就能像吃護唇膏一樣把食物推出來，完全不會沾到手，非常適合逛夜市。" },
+            { question: "為什麼夜市常見到「烤玉米」，卻很少看到「煮玉米」？", options: ["因為烤的比較快", "烤玉米塗的醬料更有特色", "煮的會爆炸", "沒人會煮"], correctIndex: 1, explanation: "台灣烤玉米的靈魂在於各家秘製的沙茶、花生醬或中藥醬汁，烤起來香氣四溢。" },
+            { question: "「大雞排」通常會強調「比臉大」，這是哪裡的知名特色？", options: ["日本", "台灣夜市", "美國", "韓國"], correctIndex: 1, explanation: "大雞排是台灣 1990 年代後發展出的代表性庶民美食。" },
+            { question: "雞排為什麼要做成「扁扁大大的」形狀，而不像麥當勞做成炸雞塊？", options: ["看起來比臉還大，吸引客人", "為了讓它飛得比較遠", "為了節省袋子的空間", "因為雞長得扁扁的"], correctIndex: 0, explanation: "將雞肉攤平受熱面積變大，炸起來速度快，且視覺上非常震撼，讓客人覺得超划算！" },
+            { question: "在夜市買雞排時，為什麼專業的吃貨通常建議「不切」？", options: ["怕切了會少一塊", "為了保護環境", "為了鎖住肉汁，讓雞排不會乾乾的", "因為老闆沒力氣切"], correctIndex: 2, explanation: "切開後肉汁會流失到袋子裡，肉質就會變硬、變乾，所以整塊咬才是最美味的吃法！" },
+            { question: "除了傳統的「酥脆炸雞排」，後來台灣還流行一種先炸過再抹醬去烤的吃法叫？", options: ["冰凍雞排", "碳烤雞排", "雞排火鍋", "甜點雞排"], correctIndex: 1, explanation: "結合了炸雞的酥脆與炭火的香氣，抹上甜鹹的烤肉醬，是非常受歡迎的進階吃法。" },
+            { question: "台灣雞排的靈魂調味料，除了胡椒粉之外，最常見的是哪一種口味？", options: ["巧克力粉", "辣粉", "抹茶粉", "糖霜"], correctIndex: 1, explanation: "辣椒粉是雞排的最佳拍檔！通常可以選擇不辣到大辣，滿足各種口味。" },
+            { question: "台灣「平價牛排」大約是在什麼時候開始在夜市流行起來的？", options: ["200 年前", "1970 年代（大約 50 年前）", "去年剛發明", "未來世界"], correctIndex: 1, explanation: "1970 年代孫東寶先生在路邊擺攤，發明了這種讓普通老百姓也吃得起的牛排。" },
+            { question: "夜市牛排最經典的特色，就是會放在一個燙燙的什麼上面？", options: ["塑膠盤", "冰塊", "鐵板", "木頭盒子"], correctIndex: 2, explanation: "使用加熱過的鐵板可以保持牛排的溫度，還會讓醬汁噴發出超誘人的香氣！" },
+            { question: "當服務生把牛排端上桌時，為什麼大家都要趕快拿「餐巾紙」擋在面前？", options: ["怕被鄰居看到吃肉", "為了擋住噴濺的油和醬汁", "為了玩躲貓貓", "因為紙巾很香"], correctIndex: 1, explanation: "醬汁淋在滾燙鐵板上會劇烈噴濺，拿紙巾擋著才不會弄髒衣服或被燙到喔！" },
+            { question: "台灣夜市牛排通常是一整套的，盤子裡一定還會出現哪一種配餐？", options: ["漢堡麵包", "鐵板麵", "握壽司", "爆米花"], correctIndex: 1, explanation: "這是台灣特色！盤子裡通常會放烏龍麵或油麵，吸滿濃郁的醬汁吃完超飽足。" },
+            { question: "在牛排旁邊通常還會有一顆雞蛋，要怎麼吃才是「夜市老饕」的最愛？", options: ["趁鐵板還很燙時趕快翻面煎熟", "拿去丟老闆", "放進口袋帶回家", "用吸管吸"], correctIndex: 0, explanation: "利用鐵板的餘溫把蛋煎成自己喜歡的半熟或全熟，是逛夜市的小樂趣！" },
+            { question: "夜市牛排的兩種經典醬汁，除了「蘑菇醬」之外，另一種辣辣的是什麼醬？", options: ["巧克力醬", "草莓醬", "黑胡椒醬", "煉乳"], correctIndex: 2, explanation: "黑胡椒醬帶點微辣和強烈的香氣，是大人最喜歡的口味。" },
+            { question: "當你點完夜市牛排餐後，老闆通常會送上一碗什麼湯讓你喝到飽？", options: ["魚湯", "濃縮咖啡", "玉米濃湯", "味噌湯"], correctIndex: 2, explanation: "甜甜香香的台式玉米濃湯是台灣平價牛排的最佳拍檔。" },
+            { question: "很多夜市牛排店還會附贈一種「裡面有包奶油」的小麵包，它叫什麼？", options: ["巨無霸漢堡", "餐包", "法國麵包", "甜甜圈"], correctIndex: 1, explanation: "烤得熱熱的小餐包，咬開後裡面有融化的鹹甜奶油，是小朋友的最愛。" },
+            { question: "為什麼夜市牛排的肉吃起來通常感覺特別「軟嫩」？", options: ["因為牛肉有運動", "因為有用醃料或嫩精先處理過", "因為那是棉花糖做的", "因為牛肉有泡溫泉"], correctIndex: 1, explanation: "為了讓口感一致且好咬，老闆通常會先用獨門醬汁和嫩化技術處理。" },
+            { question: "台灣夜市常見的「加熱滷味」，據說最早是從哪一種店家的「免費配菜」變來的？", options: ["麵攤", "麵包店", "咖啡廳", "書店"], correctIndex: 0, explanation: "早期的麵攤會準備滷汁滷豆乾海帶當配菜，後來太受歡迎才獨立變成滷味攤。" },
+            { question: "「加熱滷味」和「冷滷味」最大的差別是什麼？", options: ["一個要排隊，一個不用", "一個是熱的，一個是涼的", "一個有肉，一個沒肉", "一個甜的，一個辣的"], correctIndex: 1, explanation: "冷滷味是滷好放涼吃，口感較Q；加熱滷味則是選好後老闆丟進滾燙滷汁現燙。" },
+            { question: "滷味攤上有一種黑黑長長的，被稱為「台灣巧克力」的食材是什麼？", options: ["豬血糕", "鐵蛋", "巧克力條", "海帶"], correctIndex: 0, explanation: "豬血糕是用豬血和糯米做成的，因為形狀長得像長條巧克力，被老外這樣幽默稱呼。" },
+            { question: "為什麼滷味裡面的「王子麵」或「科學麵」通常要最後才放進去？", options: ["因為它最貴", "因為它很怕熱", "為了保持麵條 Q 彈，避免煮得太爛", "因為老闆會忘了放"], correctIndex: 2, explanation: "泡麵吸水很快，如果煮太久會變得軟爛不好吃，所以老闆通常最後才燙一下。" },
+            { question: "哪一種食材被稱為「滷味界的小海綿」，因為它能吸滿滿的滷汁湯頭？", options: ["貢丸", "豆皮（或花干）", "魚板", "玉米筍"], correctIndex: 1, explanation: "豆皮和花干中間有很多小孔洞，吸飽滷汁後咬下去會「爆漿」，是很多人的最愛。" },
+            { question: "在滷味攤選菜時，老闆通常會給你一個什麼東西來裝你想吃的菜？", options: ["書包", "塑膠籃子和夾子", "臉盆", "大鍋子"], correctIndex: 1, explanation: "選好想吃的東西放進籃子，夾上帶有號碼的夾子，老闆就知道是哪位客人的囉！" },
+            { question: "滷味好吃的靈魂配角，除了酸菜之外，還有哪一種「綠色植物」常被切碎灑在上面？", options: ["聖誕樹", "蔥花或香菜", "仙人掌", "玫瑰花"], correctIndex: 1, explanation: "新鮮的蔥花與香菜能增加香氣，讓滷味吃起來更加清爽。" },
+            { question: "「冷滷味」中最有名的小點心「鐵蛋」，它的外皮為什麼會又黑又硬？", options: ["因為噴了黑漆", "因為經過反覆的滷製與風乾", "因為放太久變成了石頭", "因為它是黑雞生的"], correctIndex: 1, explanation: "鐵蛋是滷好後風乾，再滷、再風乾，重複很多次，體積會縮小且口感變得很有嚼勁。" },
+            { question: "「章魚燒」最早是由哪一個國家發明，後來才傳入台灣變成受歡迎的小吃？", options: ["美國", "泰國", "日本", "韓國"], correctIndex: 2, explanation: "章魚燒起源於日本大阪，大約在 1990 年代開始在台灣夜市流行起來。" }
+        ],
+            // 第二週：夜市小吃後半段 ＋ 飲品零食 ＋ 地名美食 (共104題)
+        1: [
+            { question: "剛做好的章魚燒上面，會灑上一種薄薄的片狀物，遇熱還會跳舞，那是什麽？", options: ["枯樹葉", "巧克力片", "柴魚片", "碎紙片"], correctIndex: 2, explanation: "那是「柴魚片」，因為切得非常薄，受到熱氣對流影響會不斷晃動，就像在跳舞一樣。" },
+            { question: "在台灣夜市看老闆做章魚燒時，那一顆顆圓滾滾的球，主要是用什麼做的？", options: ["泥土", "麵粉糊（麵漿）", "糯米粉", "雞蛋黃"], correctIndex: 1, explanation: "老闆會將麵粉糊倒入圓形凹槽的鐵板，放入章魚和配料，慢慢翻轉成圓球。" },
+            { question: "製作「章魚燒」時，店員會用什麼工具快速翻動圓球？", options: ["筷子", "叉子", "鋼鐵針", "湯匙"], correctIndex: 2, explanation: "使用長長的鋼針翻動，是保持圓球完美形狀的關鍵技術！" },
+            { question: "為什麼「甜不辣」的名字聽起來很奇怪？它是音譯自哪國語言？", options: ["英語", "西班牙語", "葡萄牙語/日語", "德語"], correctIndex: 2, explanation: "源自葡萄牙語 Tempura，傳教士帶到日本後，再由日語傳入台灣變成了「甜不辣」。" },
+            { question: "「鼎邊趖」的「趖」字是什麼意思？", options: ["很好吃", "游動、爬行的樣子", "快速剪斷", "煮熟"], correctIndex: 1, explanation: "是指米漿沿著熱鍋邊緣滑下去結成薄片的動作，看起來就像在爬行游動。" },
+            { question: "滷味攤或烤肉攤常見的「米血」，主要是由哪兩種食材組合而成的？", options: ["巧克力和棉花糖", "豬血和糯米", "黑芝麻和白飯", "墨魚汁和麵粉"], correctIndex: 1, explanation: "早期農村社會節儉，殺豬後會把豬血留下來，加入糯米蒸熟，變成了好吃的豬血糕。" },
+            { question: "在夜市買沾粉豬血糕時，老闆最後一定會把它放進一個充滿什麼粉的盒子裡滾一滾？", options: ["奶粉", "辣椒粉", "花生粉", "麵粉"], correctIndex: 2, explanation: "熱騰騰的豬血糕沾上甜香的「花生粉」加香菜，是台灣夜市最經典的吃法！" },
+            { question: "為什麼「米血」吃起來會比一般的白飯還要 Q 彈、有嚼勁呢？", options: ["因為加了橡皮筋", "因為使用了糯米，蒸煮後澱粉很有彈性", "用機器壓扁的", "在太陽下曬過"], correctIndex: 1, explanation: "米血使用的是「糯米」，糯米的特性就是黏性強，所以吃起來特別有嚼勁。" },
+            { question: "麵線糊裡面的麵線，顏色為什麼看起來是「紅褐色」的？", options: ["加了巧克力染色", "經過長時間烘烤和蒸煮產生焦糖色", "在土裡長大", "加了紅蘿蔔汁"], correctIndex: 1, explanation: "紅麵線是經過高溫烘烤，澱粉產生變化所以顏色較深，而且比白麵線更耐煮不爛。" },
+            { question: "為什麼麵線糊的湯汁喝起來「稠稠的」，不會像白開水一樣？", options: ["裡面加了膠水", "使用了「勾芡」技術", "煮太久麵線融化了", "加了太多糖"], correctIndex: 1, explanation: "這叫「勾芡」（加入太白粉水），可以讓湯汁緊緊包裹住麵線和配料，口感更滑順。" },
+            { question: "在夜市買麵線糊時，最常看到的經典配料是哪兩種？", options: ["蚵仔和大腸", "蘋果和香蕉", "巧克力和棉花糖", "雞塊和薯條"], correctIndex: 0, explanation: "蚵仔鮮甜，大腸 Q 彈，是絕配！所以大家都叫它蚵仔大腸麵線。" },
+            { question: "麵線糊好吃的靈魂配角，通常會加入哪一種「綠色葉子」來增加香氣？", options: ["楓葉", "荷葉", "香菜", "聖誕樹葉"], correctIndex: 2, explanation: "香菜獨特的氣味能讓整碗麵線糊更有層次感！" },
+            { question: "為了讓麵線糊更好吃，桌上通常會放哪一種「黑色透明」的調味料讓客人自己加？", options: ["墨魚汁", "烏醋", "黑咖啡", "醬油"], correctIndex: 1, explanation: "烏醋酸酸的味道可以去油解膩，還能完美帶出海鮮的鮮甜味。" },
+            { question: "很多厲害的麵線糊老店，會加入一種「白白、辛辣」的泥狀物來提味，那是什麽？", options: ["香草冰淇淋", "蒜泥", "奶油", "鹽巴"], correctIndex: 1, explanation: "蒜泥能增加辛辣感和香氣，讓整碗麵線的味道變得超級香濃。" },
+            { question: "鹿港有一種很特別的麵線糊吃法，他們會在裡面加入什麼「炸得酥脆」的東西？", options: ["炸蝦", "肉羹（或赤肉條）", "炸雞排", "薯片"], correctIndex: 1, explanation: "彰化鹿港的特色是會放肉羹，讓口感多了一種肉的咬勁，非常受歡迎。" },
+            { question: "早期台灣農村社會，麵線糊最初是為了給誰吃的方便點心？", options: ["給國王吃的", "給在田裡辛苦工作的農民吃的", "給外星人的", "給貓咪的"], correctIndex: 1, explanation: "早期農忙時，主人會煮一鍋方便吞嚥的麵線糊送到田邊，讓農民快速補充體力。" },
+            { question: "「愛玉冰」的愛玉是怎麼做出來的？", options: ["工廠合成", "在水中搓洗愛玉子", "樹上滴下來的膠", "雞蛋煮熟"], correctIndex: 1, explanation: "愛玉是全世界只有台灣才有的植物，將種子在水中搓揉就會釋放果膠凝結成凍。" },
+            { question: "傳說中「愛玉」這個名字的由來，是因為什麼？", options: ["從愛玉村發現的", "是發明人女兒的名字", "吃起來有愛心的感覺", "長得像玉石"], correctIndex: 1, explanation: "相傳清朝商人發現這種果實，讓女兒「愛玉」搓洗成凍來賣，大受歡迎，就用女兒名字命名了。" },
+            { question: "為什麼我們在搓愛玉時，一定要用自來水或礦泉水，不能用「純淨水」？", options: ["愛玉喜歡髒水", "需要水裡的礦物質（鈣離子）幫忙結凍", "純淨水太貴", "純淨水會讓它變臭"], correctIndex: 1, explanation: "愛玉果膠需要和水裡的鈣、鎂離子結合才能凝固，純淨水太乾淨缺乏礦物質，愛玉就結不起來喔！" },
+            { question: "在夜市吃愛玉冰時，最經典的組合是加入哪一種水果的汁，喝起來酸甜清爽？", options: ["西瓜", "榴槤", "檸檬", "草莓"], correctIndex: 2, explanation: "檸檬的酸香與愛玉的滑嫩是絕配！「檸檬愛玉」是台灣夏季最受歡迎的消暑聖品。" },
+            { question: "甜不辣的主要材料是什麼？為什麼吃起來有鮮甜的味道？", options: ["麵粉和糖", "魚漿（把魚肉磨成泥）", "豬肉片", "雞蛋"], correctIndex: 1, explanation: "它是用新鮮魚肉磨成泥，加入澱粉和調味料混合後，再捏成形狀拿去炸或煮。" },
+            { question: "在夜市買「甜不辣」時，老闆通常會把食材放在哪裡煮？", options: ["放在牛排裡一起煮", "放在一鍋熱騰騰的「高湯」裡慢煮", "放在烤爐上烤", "用微波爐加熱"], correctIndex: 1, explanation: "夜市常見的甜不辣是放在大鍋湯裡煮，裡面還會放蘿蔔、豬血糕、貢丸等好夥伴。" },
+            { question: "甜不辣碗裡通常會有一種「圓圓白白」的蔬菜，那是什麽？", options: ["梨子", "白蘿蔔", "馬鈴薯", "蘋果"], correctIndex: 1, explanation: "白蘿蔔是甜不辣湯頭好喝的秘密，它吸滿了魚漿的鮮味，吃起來又軟又甜。" },
+            { question: "甜不辣吃完後，有一個台灣特有的「免費傳統」，一定要做這件事才算完美結尾！", options: ["跟老闆親一下", "把碗帶回家", "拿碗去裝「免費的高湯」來喝", "在碗底寫名字"], correctIndex: 2, explanation: "碗底剩下的醬汁加進老闆的大骨高湯一起喝，是老饕最愛的終極吃法！" },
+            { question: "台灣另一種也叫「天婦羅」的小吃（如基隆廟口），它跟甜不辣最大的差別是：", options: ["一個甜一個辣", "一個是湯煮，一個是現炸出來的", "一個有魚一個沒魚", "一個比較貴"], correctIndex: 1, explanation: "基隆的天婦羅通常是現捏現炸，吃起來外皮酥酥的；而甜不辣多是指在湯裡煮的。" },
+            { question: "刈包外皮白白軟軟的，它是用什麼方式做出來的？", options: ["用烤箱烤", "用油炸", "用大火「蒸」熟", "用微波爐"], correctIndex: 2, explanation: "刈包皮和饅頭一樣，都是用麵粉發酵後蒸熟的，所以口感才這麼軟綿。" },
+            { question: "刈包有一個超酷的綽號叫「虎咬豬」，這是為什麼？", options: ["老虎愛吃豬肉", "白色外皮張開像虎口，夾住紅燒豬肉", "老闆屬虎", "老虎發明的"], correctIndex: 1, explanation: "半圓形的麵皮張開時就像老虎的大嘴，夾住大塊豬肉的樣子非常生動！" },
+            { question: "在傳統習俗中，哪一天一定要吃刈包，象徵「財源滾滾」？", options: ["端午節", "中秋節", "尾牙（農曆12月16日）", "聖誕節"], correctIndex: 2, explanation: "因為刈包長得像裝滿錢的「錢包」，尾牙吃刈包代表把錢財裝滿滿，明年發大財！" },
+            { question: "刈包裡最常見的主角是什麼肉？", options: ["牛排", "雞排", "滷豬五花肉", "鴨排"], correctIndex: 2, explanation: "傳統口味是滷到軟嫩的五花肉，有肥有瘦最好吃。" },
+            { question: "為了中和肉的鹹味，刈包裡一定會灑上一種甜甜的粉，那是什麽？", options: ["巧克力粉", "花生粉", "抹茶粉", "奶粉"], correctIndex: 1, explanation: "花生粉（通常會加糖）是刈包的靈魂，能增加香氣並讓味道更平衡。" },
+            { question: "刈包裡綠綠的、酸酸脆脆的配菜是什麼？", options: ["小黃瓜", "青椒", "酸菜", "絲瓜"], correctIndex: 2, explanation: "酸菜可以解掉豬肉的油膩感，讓刈包吃起來更清爽。" },
+            { question: "刈包因為像錢包，傳統上吃刈包還有代表什麼大吉大利的意思？", options: ["把今年不好的事情通通咬碎吃掉", "吃了會變聰明", "吃了會長高", "代表想睡覺"], correctIndex: 0, explanation: "古人認為吃刈包可以象徵把過去一年不順心、倒楣的事通通「咬碎吃掉」，明年會有好運。" },
+            { question: "刈包裡除了花生粉，還常會放哪一種「香味很重」的綠色葉子？", options: ["九層塔", "香菜", "楓葉", "玫瑰花"], correctIndex: 1, explanation: "香菜是台灣小吃的經典配角，能提升整體的香氣層次。" },
+            { question: "刈包的外皮通常是什麼形狀？", options: ["三角形", "長方形", "半圓形的長方片", "五角星形"], correctIndex: 2, explanation: "它是長方形的麵皮對折，變成半開口的半圓形。" },
+            { question: "刈包現在被世界公認為「台灣漢堡」，這主要是因為？", options: ["它是用漢堡皮做的", "兩片麵餅夾肉，構造跟西洋漢堡很像", "麥當勞有賣", "美國人發明的"], correctIndex: 1, explanation: "因為構造和漢堡很像，外國朋友覺得這種吃法很親切，所以給它這個可愛的封號。" },
+            { question: "地瓜球起源於台灣的農村，最早是因為什麼原因才發明這種點心的？", options: ["地瓜太多吃不完，想換種方式吃", "當作小鳥的食物", "拿來玩丟球遊戲", "慶祝新年"], correctIndex: 0, explanation: "以前台灣農村地瓜產量大，大家動腦筋把地瓜磨泥加上粉，做成可以當零食的小點心。" },
+            { question: "剛炸好的地瓜球，為什麼放久了會「縮小」變醜？", options: ["它想睡覺", "裡面的熱空氣跑掉，外皮冷掉變硬就縮起來了", "被蟲吃了", "在變魔術"], correctIndex: 1, explanation: "地瓜球好吃的關鍵在「趁熱吃」，空氣冷卻收縮後，原本撐開的皮就會塌下去變硬！" },
+            { question: "地瓜球在油炸的過程中，老闆會一直用漏勺「用力壓」它們，這是為了什麼？", options: ["老闆心情不好", "把地瓜擠出來", "讓空氣進入，使地瓜球變得大顆又中空 Q 彈", "壓成餅乾"], correctIndex: 2, explanation: "透過「熱漲冷縮」原理，反覆按壓能讓空氣跑進球心，變成外酥內空的 Q 彈大圓球。" },
+            { question: "地瓜球吃起來ＱＱ的，除了地瓜泥，裡面還加了哪一種神奇的粉？", options: ["泡打粉", "巧克力粉", "樹薯粉（或地瓜粉）", "洗衣粉"], correctIndex: 2, explanation: "樹薯粉具有很強的彈性，跟地瓜泥混合後，就是地瓜球吃起來有嚼勁的原因。" },
+            { question: "在夜市除了常見的黃色地瓜球，還有一種「紫色」的地瓜球，那是加了什麼？", options: ["紫色藥水", "紫地瓜（芋頭地瓜）", "葡萄汁", "藍莓醬"], correctIndex: 1, explanation: "黃地瓜比較甜，紫地瓜則含有花青素，顏色漂亮又有營養。" },
+            { question: "台灣夜市常見的「小火鍋」，為什麼要叫「小」火鍋呢？", options: ["給小朋友吃的", "因為是「一人一鍋」，分量剛好一個人", "鍋子是玩具", "菜切很小"], correctIndex: 1, explanation: "發明這種「個人鍋」，讓一個人逛夜市也能享受吃火鍋的樂趣，方便又便宜。" },
+            { question: "早期夜市小火鍋桌上會放一個小架子點火，最常見的加熱燃料是什麼？", options: ["瓦斯爐", "酒精膏", "打火機", "木炭"], correctIndex: 1, explanation: "早期為了方便路邊擺攤，會使用藍色的「酒精膏」點火，是夜市經典的回憶。" },
+            { question: "哪一種口味是台灣夜市火鍋的「人氣王」，裡面通常會放酸酸的白菜？", options: ["咖哩鍋", "酸菜白肉鍋", "奶昔鍋", "沙茶鍋"], correctIndex: 1, explanation: "酸菜白肉鍋或是大腸臭臭鍋是夜市火鍋的經典口味，酸鹹開胃！" },
+            { question: "為什麼很多夜市火鍋店會標榜「白飯、飲料、冰淇淋無限供應」？", options: ["老闆賺大錢", "讓學生、上班族花小錢就「吃得超飽」", "東西快過期了", "慶祝老闆生日"], correctIndex: 1, explanation: "這是平價火鍋的特色。透過「自助吧吃到飽」，變成超高 CP 值的晚餐選擇。" },
+            { question: "台灣有一種有名的個人火鍋叫「臭臭鍋」，是因為裡面加了哪種食材？", options: ["臭雞蛋", "臭豆腐", "沒洗的襪子", "榴槤"], correctIndex: 1, explanation: "將臭豆腐、大腸、豬肉煮成一鍋，雖然聞起來有特殊味道但吃起來超香！" },
+            { question: "台灣人最引以為傲的「平民美食」代表是什麼？", options: ["滷肉飯", "龍蝦", "牛排", "義大利麵"], correctIndex: 0, explanation: "滷肉飯是台灣最具代表性的庶民美食，便宜又好吃，南北都有不同風味。" },
+            { question: "經典零食「乖乖」有個傳說，在電腦上放什麼顏色的乖乖能保佑機器不當機？", options: ["黃色", "紅色", "綠色", "紫色"], correctIndex: 2, explanation: "綠色代表「綠燈通行」，象徵機器運作正常。這是台灣工程師特有的傳統喔！" },
+            { question: "為什麼「科學麵」包裝上有一位老爺爺？他是模仿哪位科學家？", options: ["牛頓", "愛因斯坦", "諾貝爾", "富蘭克林"], correctIndex: 1, explanation: "靈感來自物理學家「愛因斯坦」。早期它還跟動畫《科學小飛俠》合作過，所以叫科學麵。" },
+            { question: "「彈珠汽水」裡面的玻璃彈珠，原本發明出來的功能是什麼？", options: ["拿來跟朋友比賽", "裝飾瓶子", "當作瓶蓋封住氣體", "攪拌汽水"], correctIndex: 2, explanation: "早期沒有金屬蓋，是利用汽水產生的氣壓將彈珠往上推，塞住瓶口防止漏氣。" },
+            { question: "吃「跳跳糖」時嘴巴會砰砰跳，是因為糖果裡包裹了什麼氣體？", options: ["氧氣", "氮氣", "二氧化碳", "氫氣"], correctIndex: 2, explanation: "糖果製作時加入了高壓二氧化碳，當糖果在嘴裡融化，氣體噴出就會產生跳動感！" },
+            { question: "「模範生點心麵」最早的由來，是利用製作什麼剩下的碎料做成的？", options: ["麵包", "餅乾", "泡麵", "蛋糕"], correctIndex: 2, explanation: "工廠將製作泡麵時掉下來的碎麵收集起來，調味後發現非常好吃，就變成了熱賣零食。" },
+            { question: "為什麼古早味「雞蛋糕」通常要做成雞蛋的形狀？", options: ["證明它是蛋做的", "早期雞蛋珍貴，看起來比較營養高級", "隨機選的", "比較好拿"], correctIndex: 1, explanation: "以前物資缺乏雞蛋是奢侈品，做成蛋形可以讓小朋友視覺上覺得吃到了營養的蛋。" },
+            { question: "「養樂多」的瓶子為什麼通常都很小，不出一公升的大瓶裝？", options: ["瓶子太貴", "怕喝太飽", "確保一次喝完維持菌種新鮮", "為了省水"], correctIndex: 2, explanation: "乳酸菌怕熱且怕雜菌污染，小包裝能確保新鮮度，讓你在好菌最活潑的時候一次喝掉。" },
+            { question: "餅乾「真魷味」的外觀形狀，是模仿哪一種食物捲起來的樣子？", options: ["豬耳朵", "烤魷魚", "雞捲", "甜甜圈"], correctIndex: 1, explanation: "它的格紋與捲曲形狀，正是模仿碳烤魷魚片遇熱縮起來的模樣喔！" },
+            { question: "「麵茶」這種傳統點心，最主要的材料是什麼？", options: ["麵條粉碎", "炒熟的麵粉", "茶葉粉末", "豆乾粉"], correctIndex: 1, explanation: "它是用微火將麵粉炒熟，加入糖和芝麻，沖入熱水後會變成香濃的糊狀點心。" },
+            { question: "巧克力拿在手裡很快就會融化，是因為它的熔點大約是幾度？", options: ["10度", "25度", "35度左右", "100度"], correctIndex: 2, explanation: "巧克力的熔點接近人體體溫（約35-37度），這也是它「入口即化」的原因！" },
+            { question: "「口哨糖」中間有一個洞，是為了達到什麼目的？", options: ["節省材料", "吹出聲音", "比較快溶化", "方便串起來"], correctIndex: 1, explanation: "利用氣流通過中間的小孔產生振動，讓糖果可以像口哨一樣吹出響聲。" },
+            { question: "哪一種傳統糖果是用「麥芽糖」夾著一顆鹹鹹的小東西？", options: ["軟糖", "麥芽糖夾心酸梅", "巧克力", "苦瓜乾"], correctIndex: 1, explanation: "甜甜的麥芽糖包著鹹酸的梅子，這是台灣最經典的鹹甜組合古早味糖果！" },
+            { question: "「鱈魚香絲」的主要材料除了魚漿，還會加入哪種粉增加嚼勁？", options: ["巧克力粉", "澱粉", "奶粉", "泡打粉"], correctIndex: 1, explanation: "加入澱粉能讓魚漿變得更有韌性，這樣才能拉成長條狀而且越嚼越香。" },
+            { question: "以前雜貨店賣的「抽籤糖果」主要的趣味在於？", options: ["糖果很大", "可以抽獎決定糖果大小", "糖果是透明的", "不用錢"], correctIndex: 1, explanation: "這是一種「抽當」文化，花一點錢抽籤，運氣好就可以換到超大的糖果或玩具獎品。" },
+            { question: "喝完氣泡飲料會打嗝，是因為裡面含有哪種氣體？", options: ["氧氣", "二氧化碳", "氮氣", "氫氣"], correctIndex: 1, explanation: "二氧化碳在胃裡受熱體積變大，無處可去就會透過打嗝從嘴巴排出來。" },
+            { question: "「冬瓜茶」製作時，通常是跟哪一種糖一起熬煮成糖磚？", options: ["白砂糖", "紅糖/黑糖", "蜂蜜", "楓糖"], correctIndex: 1, explanation: "冬瓜必須與紅糖（黑糖）一起熬煮，才會產生那種特殊的焦香味和深色澤。" },
+            { question: "「旺旺仙貝」表面的白色粉末，吃起來是什麼味道？", options: ["甜甜鹹鹹", "只有苦味", "辣辣的", "酸酸的"], correctIndex: 0, explanation: "那是特調的甜鹹醬油調味粉，是仙貝好吃的關鍵靈魂！" },
+            { question: "為什麼有些飲品（如維他命飲料）要用「棕色」瓶子裝？", options: ["比較好看", "遮光保護營養不被破壞", "玻璃只有這種顏色", "比較便宜"], correctIndex: 1, explanation: "棕色瓶能過濾掉部分光線，防止維生素C等營養成分因為被光線照射而分解失效。" },
+            { question: "傳統零食「麻荖」外面包裹的白色一條一條的是什麼？", options: ["麵條", "米果/米粒", "碎紙", "巧克力"], correctIndex: 1, explanation: "那是用米膨發後做成的米果，沾上麥芽糖吃起來酥酥脆脆不黏牙。" },
+            { question: "哪一種飲品被稱為「台灣可樂」，是利用多種植物根部精油製成的？", options: ["仙草茶", "冬瓜茶", "沙士", "麥茶"], correctIndex: 2, explanation: "沙士特有的味道來自植物精油，因為充滿氣泡且顏色深，被暱稱為台灣可樂。" },
+            { question: "「果汁軟糖」之所以Q彈，通常是添加了哪一種成分？", options: ["脂肪", "明膠", "纖維素", "鈣質"], correctIndex: 1, explanation: "明膠（吉利丁）是提取出來的動物性蛋白質，是讓軟糖產生Q彈口感的主要原料。" },
+            { question: "為什麼「木瓜牛奶」打好後如果不趕快喝完，會變得苦苦的？", options: ["木瓜壞掉了", "牛奶過期了", "木瓜酵素分解了牛奶蛋白質", "加了太多糖"], correctIndex: 2, explanation: "木瓜酵素會將牛奶蛋白分解成帶苦味的胜肽物質，所以現打現喝最好喝喔！" },
+            { question: "「珍珠奶茶」裡的珍珠如果放進冰箱會變硬，是因為哪種成分老化了？", options: ["蛋白質", "澱粉", "脂肪", "維生素"], correctIndex: 1, explanation: "珍珠是用樹薯澱粉做的，低溫會讓澱粉分子重新排列變硬，這就是科學上的「澱粉老化」。" },
+            { question: "「小美冰淇淋」為什麼裡面常會附一根扁扁的小木匙？", options: ["為了環保", "古早的傳統，方便打開就吃", "為了攪拌咖啡", "跟風"], correctIndex: 1, explanation: "打開紙盒直接用小木匙挖來吃，是台灣人吃傳統冰淇淋最經典的回憶！" },
+            { question: "台灣特有的「東方美人茶」有一種特殊的什麼香味？", options: ["臭豆腐味", "熟果蜜香味", "魚腥味", "榴槤味"], correctIndex: 1, explanation: "經過小綠葉蟬叮咬後，茶葉會產生化學變化，散發出獨特的熟果香與蜂蜜香氣！" },
+            { question: "「仙草」是從哪裡來的？", options: ["工廠合成", "一種植物熬煮出來", "樹上摘下來", "可樂熬出來的"], correctIndex: 1, explanation: "仙草是一種草本植物，曬乾後加水熬煮會釋放膠質，冷卻就變成黑色的仙草凍了。" },
+            { question: "「雞蛋布丁」底部黑黑的一層是什麼？", options: ["巧克力", "焦糖", "芝麻", "皮蛋"], correctIndex: 1, explanation: "那是熬煮過帶有微苦甜味的「焦糖」，搭配上層的雞蛋布丁非常對味！" },
+            { question: "「可樂果」是用什麼做的？", options: ["豌豆", "蠶豆", "馬鈴薯", "地瓜"], correctIndex: 0, explanation: "經典的可樂果其實是用「豌豆」加上麵粉做成的，形狀像螺旋狀，越吃越唰嘴！" },
+            { question: "「義美小泡芙」最好吃的隱藏吃法是？", options: ["泡水", "放冷凍庫", "沾鹽巴", "泡牛奶"], correctIndex: 1, explanation: "放進冷凍庫冰過後，裡面的內餡會變成像冰淇淋一樣的口感，超級好吃！" },
+            { question: "「鱈魚香絲」裡面真的有鱈魚嗎？", options: ["有", "沒有", "只有香味", "那是塑膠"], correctIndex: 0, explanation: "真的有！它主要是用魚漿（包含鱈魚等魚肉）加入澱粉製作而成的。" },
+            { question: "「七七乳加巧克力」的名字由來？", options: ["裡面有七種果仁", "創辦人七月七日生", "當時售價七元", "一次賣七種產品"], correctIndex: 2, explanation: "早期剛推出時，一條大大的巧克力就賣新台幣「七元」，因而得名。" },
+            { question: "「吹泡泡糖」如果不小心吞下去會怎樣？", options: ["腸子黏住", "會排泄出來", "肚子會爆炸", "乾嘔吐出來"], correctIndex: 1, explanation: "口香糖的膠基雖然人體無法消化，但它最終會隨著腸胃蠕動變成便便排泄出來，不會黏住腸子喔！" },
+            { question: "「足球巧克力」的包裝紙是什麼顏色？", options: ["只有黑白", "五顏六色", "金色", "沒有包裝"], correctIndex: 1, explanation: "這款復古巧克力雖然叫足球，但外面的鋁箔紙包裝其實是五顏六色、非常繽紛的！" },
+            { question: "「香菸糖」真的有尼古丁嗎？", options: ["有", "沒有", "一點點", "有很多"], correctIndex: 1, explanation: "完全沒有！它只是外觀做成香菸形狀的梅子味或涼爽口味糖果，是小朋友假裝大人的玩具零食。" },
+            { question: "「牙膏糖」要怎麼吃？", options: ["擠出來吃", "拿來刷牙", "泡水喝", "不能吃"], correctIndex: 0, explanation: "它包裝成小牙膏的樣子，裡面裝著軟軟的甜醬，吃的時候要像擠牙膏一樣擠進嘴巴裡！" },
+            { question: "「太陽餅」是哪裡的特產？", options: ["台北", "台中", "高雄", "花蓮"], correctIndex: 1, explanation: "太陽餅是台中名產，內餡是甜甜的麥芽糖，吃起來皮薄多層又酥脆！" },
+            { question: "「肉圓」最有名的地方在哪？", options: ["彰化", "宜蘭", "桃園", "苗栗"], correctIndex: 0, explanation: "彰化肉圓非常出名，外皮用番薯粉製作，低溫油炸後口感超 Q 彈！" },
+            { question: "「貢丸」是哪裡的代表？", options: ["新竹", "苗栗", "南投", "台北"], correctIndex: 0, explanation: "新竹因為風大，做出來的貢丸水分少、肉質緊實，吃起來特別 Q 彈彈牙！" },
+            { question: "「三星蔥」是哪裡的產物？", options: ["宜蘭", "屏東", "台東", "南投"], correctIndex: 0, explanation: "宜蘭三星鄉水質純淨，種出來的蔥特別鮮甜多汁，是做蔥油餅的最棒材料。" },
+            { question: "「金門」最出名的零食是什麼？", options: ["貢糖", "太陽餅", "鳳梨酥", "麻糬"], correctIndex: 0, explanation: "金門因為風大適合種花生，將花生敲碎熬煮就成了香酥好吃的貢糖。" },
+            { question: "「馬祖」有名的飲品是什麼？", options: ["奶茶", "老酒", "青草茶", "高粱"], correctIndex: 1, explanation: "馬祖居民早期冬天為了驅寒，家家戶戶都會用糯米釀造老酒，老酒麵線超受歡迎！" },
+            { question: "「花蓮」著名的點心是什麼？", options: ["麻糬", "蛋黃酥", "牛舌餅", "綠豆糕"], correctIndex: 0, explanation: "花蓮阿美族的傳統點心「杜侖」（粟米麻糬）非常有名，現在發展出各式口味的麻糬伴手禮。" },
+            { question: "「基隆廟口」最有名的湯類小吃？", options: ["鼎邊趖", "牛肉湯", "四神湯", "貢丸湯"], correctIndex: 0, explanation: "鼎邊趖是用米漿沿著鍋邊滾燙成白色的Q彈麵條，加入肉羹、蝦仁羹煮成鮮甜的湯。" },
+            { question: "「深坑」最有名的小吃是什麼？", options: ["豆腐", "臭豆腐", "兩者皆是", "豆花"], correctIndex: 2, explanation: "深坑老街以獨特的「碳烤臭豆腐」與各種豆腐料理聞名全台。" },
+            { question: "「內灣」老街常賣什麼粽子？", options: ["野薑花粽", "肉粽", "鹼粽", "南部粽"], correctIndex: 0, explanation: "內灣盛產野薑花，當地人將野薑花根部磨成粉加入包粽，吃起來帶有淡淡的花香。" },
+            { question: "「大溪」以什麼聞名？", options: ["豆干", "魚丸", "滷肉飯", "米粉"], correctIndex: 0, explanation: "桃園大溪的水質非常好，做出來的黑豆干特別香Ｑ入味！" },
+            { question: "「北埔」最有名的茶飲是什麼？", options: ["擂茶", "烏龍茶", "泡沫紅茶", "抹茶"], correctIndex: 0, explanation: "北埔是客家聚落，客家擂茶是將茶葉、芝麻、花生等磨碎後沖熱水喝，非常香濃！" },
+            { question: "「東港」著名的珍貴魚卵是什麼？", options: ["烏魚子", "櫻花蝦", "油魚子", "明太子"], correctIndex: 0, explanation: "屏東東港三寶之一就是珍貴的烏魚子，烤過後切片配蘋果或蒜苗超好吃。" },
+            { question: "「澎湖」著名的冷飲是什麼？", options: ["風茹茶", "仙人掌冰", "兩者皆是", "黑糖水"], correctIndex: 2, explanation: "澎湖特有的風茹茶消暑解渴，而紫紅色的仙人掌冰酸酸甜甜，都是去澎湖必吃的！" },
+            { question: "「瑞穗」最有名的產物是什麼？", options: ["鮮奶", "雞蛋", "豬肉", "蘋果"], correctIndex: 0, explanation: "花蓮瑞穗擁有優質的牧場與純淨水源，出產的鮮乳非常濃郁好喝。" },
+            { question: "「關廟」最有名的產品？", options: ["麵線", "鳳梨", "兩者皆是", "釋迦"], correctIndex: 2, explanation: "台南關廟的鳳梨超級甜，而關廟麵因為經過太陽日曬，久煮不爛非常Ｑ彈。" },
+            { question: "「美濃」最有名的主食是什麼？", options: ["粄條", "飯", "麵包", "米粉"], correctIndex: 0, explanation: "高雄美濃是著名的客家庄，客家粄條（面帕粄）口感滑順，炒的湯的都好吃！" },
+            { question: "「大湖」冬天的明星水果？", options: ["草莓", "西瓜", "橘子", "芒果"], correctIndex: 0, explanation: "苗栗大湖是台灣最大的草莓產地，冬天去採草莓是很多家庭的最愛！" },
+            { question: "「燕巢」最有名的三寶不包括？", options: ["芭樂", "棗子", "蘋果", "西瓜"], correctIndex: 2, explanation: "高雄燕巢的泥火山特殊土質種出來的水果特別甜，三寶是芭樂、棗子和西施柚，不產蘋果喔！" },
+            { question: "「旗津」最常見的烤海鮮？", options: ["烤小卷", "烤龍蝦", "烤螃蟹", "烤魚"], correctIndex: 0, explanation: "去高雄旗津老街，到處都能聞到刷上甜鹹醬汁的碳烤小卷香氣！" },
+            { question: "「鹿港」有名的甜點？", options: ["牛舌餅", "太陽餅", "鳳梨酥", "綠豆糕"], correctIndex: 0, explanation: "鹿港的牛舌餅厚實軟Ｑ，裡面包著麥芽糖，長得像牛的舌頭因而得名。" },
+            { question: "「竹山」最有名的特產？", options: ["番薯", "竹筍", "兩者皆是", "香蕉"], correctIndex: 2, explanation: "南投竹山特產地瓜和竹筍，竹山的地瓜包和竹筒飯都非常出名。" },
+            { question: "「永和」最有名的早餐飲品？", options: ["豆漿", "米漿", "奶茶", "咖啡"], correctIndex: 0, explanation: "永和豆漿聞名全台，帶有微微焦香的熱豆漿配上油條是經典的台式早餐！" }
+        ],
+// 第三週：衣：台灣人的穿搭 (共84題)
+            2: [
+                { question: "台灣目前政府認定的原住民族共有幾族？", options: ["9 族", "12 族", "14 族", "16 族"], correctIndex: 3, explanation: "早期只有 9 族，但隨著各族發起正名運動，目前已增加到 16 族。" },
+                { question: "早期原住民織布最主要的天然植物纖維是什麼？", options: ["塑膠線", "苧麻", "稻草", "棉花"], correctIndex: 1, explanation: "苧麻是台灣山區常見植物，族人會剝皮、刮青、紡紗，最後織成耐穿的衣服。" },
+                { question: "哪一族的傳統服飾以「鮮豔的大紅色」為主，在豐年祭時非常顯眼？", options: ["泰雅族", "阿美族", "達悟族", "布農族"], correctIndex: 1, explanation: "阿美族服飾色彩繽紛，尤其是大紅色代表了熱情與生命力。" },
+                { question: "泰雅族與賽德克族的祖先，臉上有一種特殊的榮耀印記是什麼？", options: ["紋面（刺青）", "畫彩妝", "貼金箔", "戴面具"], correctIndex: 0, explanation: "紋面代表成年、擁有生活技能（男會狩獵、女會織布），也是通往祖靈地的憑證。" },
+                { question: "居住在蘭嶼，因為要下海捕魚而發展出特色「丁字褲」的是哪一族？", options: ["卑南族", "鄒族", "達悟族", "邵族"], correctIndex: 2, explanation: "達悟族住在海上島嶼，丁字褲通風、活動方便，最適合捕魚生活。" },
+                { question: "排灣族貴族的衣服上，最常出現的守護神圖騰是什麼？", options: ["獨角獸", "百步蛇", "龍", "獅子"], correctIndex: 1, explanation: "排灣族認為百步蛇是守護神，常將蛇紋繡在衣服、雕刻在房子上。" },
+                { question: "賽夏族每兩年舉行一次「矮靈祭」，跳舞時背後會掛著發出清脆響聲的什麼？", options: ["臀鈴（背響）", "喇叭", "哨子", "銅鑼"], correctIndex: 0, explanation: "臀鈴是賽夏族祭典最重要的配件，利用竹管、貝殼或鈴鐺碰撞發聲。" },
+                { question: "魯凱族人非常崇敬一種花，只有勇士或品德高尚的女性才能佩戴？", options: ["玫瑰花", "太陽花", "百合花", "康乃馨"], correctIndex: 2, explanation: "百合花代表純潔與英雄的榮耀，佩戴它需要經過部落長輩的認定。" },
+                { question: "哪一族被稱為「高山上的獵人」，傳統服裝早期常以獸皮製作？", options: ["阿美族", "噶瑪蘭族", "布農族", "撒奇萊雅族"], correctIndex: 2, explanation: "布農族擅長狩獵，早期衣服多用鹿皮、羊皮縫製，保暖又耐磨。" },
+                { question: "阿美族女生在祭典時，腰間會斜掛一個裝物的小包包，叫什麼？", options: ["錢包", "情人袋", "書包", "旅行袋"], correctIndex: 1, explanation: "情人袋又叫「阿魯富」(Alufu)，在祭典中若送給心儀對象代表表白。" },
+                { question: "哪一族的服飾常出現「菱形紋」，代表「祖靈的眼睛」？", options: ["泰雅族", "達悟族", "邵族", "撒奇萊雅族"], correctIndex: 0, explanation: "菱形圖案提醒族人要規矩做事，因為祖靈正看著你。" },
+                { question: "達悟族人在重要慶典時會戴上用「銀幣」敲打做成的帽子，叫什麼？", options: ["金冠", "銀盔", "銅帽", "石罐"], correctIndex: 1, explanation: "這代表家族的財富，閃閃發亮的銀盔是達悟族獨特的工藝。" },
+                { question: "鄒族（阿里山）男性的傳統頭飾上，通常會裝飾哪種羽毛？", options: ["雄鷹羽毛", "雞羽毛", "鴕鳥毛", "鸚鵡毛"], correctIndex: 0, explanation: "鄒族男性的皮帽飾有鷹羽，象徵勇氣與力量。" },
+                { question: "在排灣族婚禮中非常貴重、每一顆都有名字的故事珠子是？", options: ["玻璃珠", "琉璃珠", "珍珠", "彈珠"], correctIndex: 1, explanation: "琉璃珠是身份地位的象徵，是排灣族的三寶之一。" },
+                { question: "卑南族（普悠瑪）在慶典時，最顯眼的頭部裝飾是什麼？", options: ["鮮花環", "毛帽", "耳機", "草帽"], correctIndex: 0, explanation: "卑南族不論男女都喜歡戴鮮花或手工編織的花環，展現美感。" },
+                { question: "噶瑪蘭族最獨特的工藝，是利用哪種「纖維」來織布？", options: ["蘋果絲", "西瓜絲", "香蕉絲", "鳳梨絲"], correctIndex: 2, explanation: "香蕉絲織布是噶瑪蘭族的國寶級技術，布料輕薄透氣。" },
+                { question: "原住民衣服上的「貝珠衣」主要出現在哪一族？", options: ["泰雅族", "達悟族", "賽夏族", "魯凱族"], correctIndex: 0, explanation: "由上萬顆貝殼珠縫製，只有頭目或大勇士才能穿，極為珍貴。" },
+                { question: "撒奇萊雅族的代表色是「火紅色」與「土金色」，這與什麼有關？", options: ["喜歡辣椒", "紀念抗戰歷史與土地", "喜歡夕陽", "採金礦"], correctIndex: 1, explanation: "紅色象徵烈火與鮮血，金色象徵對土地的眷戀。" },
+                { question: "賽德克族的服飾常見大量「紅色」，主要原因是什麼？", options: ["紅色便宜", "代表祖靈的血，可避邪", "配合草莓季", "隨便選"], correctIndex: 1, explanation: "紅色象徵生命力，也代表祖靈守護，具有保護族人的意義。" },
+                { question: "太魯閣族的女性在結婚前，必須學會哪種最重要的技能？", options: ["游泳", "織布", "唱歌", "賽跑"], correctIndex: 1, explanation: "傳統文化中，織布技巧好的女性才能紋面並談論婚嫁。" },
+                { question: "原住民服飾上的彩色亮片或鈴鐺，除了好看還有什麼功能？", options: ["增加跳舞時的聲音節奏", "照鏡子", "增加重量", "防雷擊"], correctIndex: 0, explanation: "配件隨動作晃動發出聲響，也是歌舞音樂的一部分。" },
+                { question: "魯凱族和排灣族有嚴格的階級制度，衣服上的「圖騰顏色」通常？", options: ["貴族更華麗", "大家平分", "抽籤決定", "只有黑色"], correctIndex: 0, explanation: "刺繡愈複雜、圖騰愈多，代表社會地位愈高。" },
+                { question: "哪一族被稱為「森林中的勇士」，男子服飾常有皮質胸兜？", options: ["泰雅族", "鄒族", "布農族", "阿美族"], correctIndex: 1, explanation: "鄒族男子的皮帽、皮衣與胸兜極具特色。" },
+                { question: "阿嬤的年代，最流行的一種連身衣服，兩側有高高的開叉，這叫什麼？", options: ["睡衣", "旗袍", "牛仔裙", "運動服"], correctIndex: 1, explanation: "旗袍是當時非常正式且漂亮的服裝，可以顯現女生優雅的體態，早期甚至連上學或喝喜酒都要穿喔。" },
+                { question: "早期婦女穿的衣服，領口常會有漂亮的金屬扣子，這種圓圓的扣子叫什麼？", options: ["拉鍊", "黏扣帶", "盤扣", "螺絲"], correctIndex: 2, explanation: "盤扣是用布條編織而成的手工扣子，形狀有很多種（像花朵或蝴蝶），是傳統服裝上非常精緻的裝飾。" },
+                { question: "在還沒有化學染料前，台灣婦女常穿「藍色」的衣服，這是利用哪種植物染成的？", options: ["藍草（大菁）", "藍莓", "藍色妖姬", "牽牛花"], correctIndex: 0, explanation: "這就是有名的「藍染」。早期農村婦女常穿藍色大襟衫，因為藍草染出的布耐髒又耐洗，非常適合工作。" },
+                { question: "早期女生有一種像「肚兜」的內衣，主要穿在衣服裡面，它的形狀通常是什麼？", options: ["圓形", "菱形", "五角星形", "長方形"], correctIndex: 1, explanation: "肚兜通常是菱形的，中間會刺繡漂亮的花鳥，除了當內衣，還可以保暖肚子不會受涼。" },
+                { question: "早期婦女出門或是下田工作時，為了遮陽防塵，頭上常會圍著什麼？", options: ["皇冠", "頭巾（客家花布巾）", "鋼盔", "浴帽"], correctIndex: 1, explanation: "頭巾非常實用，尤其是客家婦女常用亮麗的彩色花布圍在頭上，這也成了台灣很具代表性的顏色。" },
+                { question: "所謂的「大襟衫」是指衣服的扣子開在身體的哪一個位置？", options: ["正中間", "背後", "右側", "腋下"], correctIndex: 2, explanation: "大襟衫的開口在右側，這與西式襯衫開在中間很不一樣，是漢族傳統服裝的一大特色。" },
+                { question: "早期有錢人家的婦女，衣服袖口和領口常會縫上精美的圖案，這種手工藝叫什麼？", options: ["塗鴉", "刺繡", "蓋章", "影印"], correctIndex: 1, explanation: "刺繡是古代女生必學的技能，她們會在衣服上繡牡丹、鳳凰等象徵吉祥的花紋。" },
+                { question: "為什麼以前的衣服（如大襟衫）看起來都寬寬大大的，不喜歡穿緊身的？", options: ["因為沒錢買小衣服", "為了活動方便、通風涼快", "怕被蚊子咬", "因為當時流行睡衣風"], correctIndex: 1, explanation: "台灣天氣炎熱，加上早期婦女需要勞動（做家事或農事），寬鬆的剪裁比較透氣也好活動。" },
+                { question: "早期婦女洗衣服時，沒有洗衣機和洗衣精，她們常會拿什麼果實來搓泡泡？", options: ["蘋果", "苦瓜", "無患子", "西瓜"], correctIndex: 2, explanation: "無患子含有天然的皂素，搓水後會產生泡泡，是阿嬤年代最強的天然洗衣精。" },
+                { question: "以前男生穿的褲子通常沒有拉鍊，他們是用什麼方式來固定褲子的？", options: ["用膠帶黏", "用皮帶", "用繩子或布條當褲腰帶", "用膠水"], correctIndex: 2, explanation: "當時的褲子腰圍做得很大，穿上後再把多餘的布摺疊，最後用一根長長的「布帶」繞幾圈繫緊。" },
+                { question: "在還沒有發明塑膠雨衣前，農夫下雨天會穿哪一種「天然植物」做成的雨衣？", options: ["蓮葉", "蓑衣（棕櫚纖維）", "樹皮", "香蕉葉"], correctIndex: 1, explanation: "蓑衣利用棕櫚樹皮的纖維編成，它像鳥類的羽毛一樣可以排開雨水，讓裡面的衣服不會濕透。" },
+                { question: "早期台灣男生出門時，頭上常會戴一種用「竹子或草」編成的遮陽帽，它是？", options: ["安全帽", "斗笠", "棒球帽", "皇冠"], correctIndex: 1, explanation: "斗笠長得像一個尖尖的小山頭，可以遮擋強烈的陽光，下小雨時也能擋雨，是農村生活的必備品。" },
+                { question: "早期有錢人家的男生或讀書人，會穿一種長到腳踝的衣服，這叫什麼？", options: ["迷你裙", "長袍", "短褲", "披風"], correctIndex: 1, explanation: "長袍通常用絲綢或細布做成，穿起來很有氣質。因為不方便做粗活，大多是讀書人或商人穿的。" },
+                { question: "以前男生的衣服領口通常不是用拉鍊，而是用布編成的結，這叫什麼？", options: ["領帶", "盤扣", "蝴蝶結", "魔鬼氈"], correctIndex: 1, explanation: "盤扣是手工編織的扣子，男生衣服的盤扣通常做得比較簡單大方，不像女生那樣花俏。" },
+                { question: "早期台灣男生下田工作或走路時，最常穿的「天然材料」鞋子是？", options: ["運動鞋", "草鞋", "高跟鞋", "溜冰鞋"], correctIndex: 1, explanation: "草鞋用稻草編織而成，材料隨手可得，穿壞了可以再編，而且止滑效果很好。" },
+                { question: "早期有一種長形的布，男生會把它圍在腰間當口袋，或是工作時擦汗，它是？", options: ["領巾", "腰巾（肚兜）", "擦手紙", "毛巾"], correctIndex: 1, explanation: "男生的肚兜通常比較樸素，除了保暖肚子，裡面還可以塞錢包或小菸草盒。" },
+                { question: "日治時期後，台灣男生開始流行穿一種叫「學生服」或「詰襟」的衣服，它的特徵是？", options: ["領口有漂亮的蕾絲", "領口高高的、有一排亮亮的金屬鈕扣", "沒有扣子", "像洋裝"], correctIndex: 1, explanation: "這是一種帶有軍裝色彩的制服，對當時的學生來說，穿上它代表受過良好的教育，是非常神氣的事情。" },
+                { question: "早期台灣有一種特殊的職業叫「苦力」（搬運工），他們工作時通常會怎麼穿？", options: ["穿西裝打領帶", "戴手套穿雨鞋", "打赤膊（不穿上衣）並披一條毛巾在肩上", "穿防護衣"], correctIndex: 2, explanation: "因為勞動量大、流汗多，他們常不穿上衣，並在肩膀墊一條厚毛巾來保護皮膚，避免被重物壓傷。" },
+                { question: "台灣曾被稱為「什麼王國」，因為衣服外銷全球第一？", options: ["衣服王國", "紡織王國", "鈕扣王國", "服飾大王"], correctIndex: 1, explanation: "台灣曾是舉世聞名的「紡織王國」，早期以棉紡為主，1970年代實現垂直整合。" },
+                { question: "現代運動服常用的「排汗衣」主要是什麼材質？", options: ["棉布", "人造纖維（聚酯纖維）", "羊毛", "鵝毛"], correctIndex: 1, explanation: "聚酯纖維快乾、不吸水但會吸汗、耐磨不易變形，是目前市面上最常見的機能運動布料。" },
+                { question: "台灣人利用哪種廢棄物做出高品質的環保抽紗衣服？", options: ["寶特瓶", "廢紙", "香蕉", "鐵罐"], correctIndex: 0, explanation: "回收的透明寶特瓶通常會抽出白紗，綠色則抽出綠紗。這種技術省去了部分化學染色過程，減少廢水排放。" },
+                { question: "為什麼運動員穿的衣服要「貼身」？", options: ["比較帥", "減少空氣阻力與增加支撐", "比較便宜", "展現肌肉線條"], correctIndex: 1, explanation: "貼身設計可以有效減少風的阻力，並且給予肌肉適當的包覆與支撐。" },
+                { question: "衣服標籤上標示『100% Cotton』代表什麼意思？", options: ["100% 塑膠", "100% 純棉", "100% 羊毛", "100% 麵條"], correctIndex: 1, explanation: "Cotton 就是純棉的意思，穿起來柔軟舒適吸汗。" },
+                { question: "台灣有一種世界知名的布料，是用「咖啡渣」做的嗎？", options: ["是，可以除臭", "不是，那是咖啡灑到衣服上", "只有咖啡色衣服才是", "是，可以讓衣服更華麗"], correctIndex: 0, explanation: "將回收的咖啡渣磨成奈米級粉末，製成咖啡紗，具有天然的除臭、速乾、吸濕排汗及抗UV功能。" },
+                { question: "魔鬼氈（黏扣帶）的發明靈感是來自哪種植物？", options: ["玫瑰", "牛蒡（芒刺）", "仙人掌", "小白菜"], correctIndex: 1, explanation: "魔鬼氈（Velcro）的發明靈感主要來自牛蒡（Burdock）果實上的微小倒鉤。" },
+                { question: "拉鍊（Zip）最初是為了取代什麼而發明的？", options: ["膠水", "鞋帶和鈕扣", "皮帶", "項鍊"], correctIndex: 1, explanation: "拉鍊最初是為了取代鞋子、長靴以及衣服上繁瑣的鈕扣而發明的。" },
+                { question: "為什麼冬天的衣服穿很多層比穿一件厚衣服暖？", options: ["比較重", "層與層之間有「靜止空氣層」可以保溫", "看起來比較胖", "比較安全"], correctIndex: 1, explanation: "空氣是很好的隔熱層，多層次穿搭能鎖住體溫不流失。" },
+                { question: "哪種顏色的衣服在烈日下最容易吸熱？", options: ["白色", "黑色", "黃色", "紅色"], correctIndex: 1, explanation: "在烈日下，黑色等深色衣服最容易吸收光能轉化為熱能。" },
+                { question: "衣服穿久了產生的「靜電」最常出現在哪種天氣？", options: ["下雨天", "乾燥的冬天", "潮濕的夏天", "下冰雹"], correctIndex: 1, explanation: "最常出現在乾冷的天氣，特別是冬天濕度低的時候。" },
+                { question: "台灣的「機能性布料」產量佔全球比例非常高，什麼是機能性？", options: ["會唱歌的布", "有特殊功能（如防紫外線、防水）的布", "很貴的布", "很便宜"], correctIndex: 1, explanation: "具備防水、吸濕排汗、抗菌、涼感、抗UV等傳統纖維所沒有的特定功能。" },
+                { question: "牛仔褲最早是給誰穿的耐磨工作服？", options: ["淘金礦工", "廚師", "老師", "學生"], correctIndex: 0, explanation: "1850年代加州淘金熱期間，礦工們需要非常堅固耐用的褲子，牛仔褲因此誕生。" },
+                { question: "為什麼新衣服穿之前最好先洗過？", options: ["為了洗掉藥劑殘留", "為了讓它變大", "為了讓它縮水", "因為有殘留大便"], correctIndex: 0, explanation: "新衣服在製作和運送過程中可能有染料或化學藥劑殘留，先洗過比較安心。" },
+                { question: "天然蠶絲是從哪裡來的？", options: ["樹皮", "蠶寶寶的繭", "蜘蛛網", "棉花糖"], correctIndex: 1, explanation: "天然蠶絲源自於家蠶的幼蟲在結繭時所分泌的絹絲液，凝固後形成蛋白質長纖維。" },
+                { question: "衣服縮水通常是因為使用了什麼樣的水溫？", options: ["冰水", "熱水", "汽水", "冷熱水"], correctIndex: 1, explanation: "超過 40°C~60°C 的熱水容易導致棉、麻等天然纖維嚴重縮水。" },
+                { question: "羽絨衣裡面的「羽絨」主要來自哪種動物？", options: ["雞", "鴨或鵝", "鴕鳥", "頭毛"], correctIndex: 1, explanation: "羽絨（Down）主要來自水鳥，其中以鵝和鴨的胸腹部絨毛為最主要的來源。" },
+                { question: "哪種纖維被稱為「纖維皇后」，摸起來滑溜溜的？", options: ["棉", "絲綢", "麻", "咖啡紗"], correctIndex: 1, explanation: "絲綢因為具有獨特的天然光澤與滑順的觸感，被譽為纖維皇后。" },
+                { question: "防水外套上的「潑水效果」是讓水變成什麼形狀滑落？", options: ["水滴狀", "長條狀", "消失不見", "三角形"], correctIndex: 0, explanation: "防潑水效果會讓水珠變成類似荷葉上圓潤水珠的球狀，隨後滑落。" },
+                { question: "鈕扣通常縫在衣服的哪一側？", options: ["只有右邊", "男左女右（傳統習慣）", "只有左邊", "學生"], correctIndex: 1, explanation: "男裝傳統設計在右側方便右手解開；女裝設計在左側，早期是為了方便僕人協助穿衣。" },
+                { question: "什麼東西可以讓皺巴巴的衣服變平整？", options: ["熨斗", "吹風機", "電風扇", "微波爐"], correctIndex: 0, explanation: "利用熨斗的熱度與蒸汽可以軟化纖維，讓衣物恢復平整。" },
+                { question: "牛仔褲的藍色最早是用什麼植物染料染的？", options: ["玫瑰", "靛藍（大菁）", "墨汁", "大花咸豐草"], correctIndex: 1, explanation: "最早是使用天然的植物染料靛藍（Indigo），從含靛青素的藍草中提取。" },
+                { question: "羊毛衫如果不小心用熱水洗，會發生什麼事？", options: ["變成長裙", "嚴重縮小", "變成棉花糖", "消失不見"], correctIndex: 1, explanation: "熱水加上洗衣機的攪動，會使羊毛纖維表面的鱗片張開互相纏繞鎖死，導致嚴重縮水。" },
+                { question: "為什麼海上救生衣常是「亮橘色」？", options: ["鯊魚怕橘色", "在海中顯眼好救援", "橘色最便宜", "最不好看"], correctIndex: 1, explanation: "橘色在藍色的海水中對比度最高，最容易被救援人員發現。" },
+                { question: "衣服標籤上的「三角形」符號通常代表什麼？", options: ["可以漂白", "水洗", "可以烘乾", "乾洗"], correctIndex: 0, explanation: "三角形是漂白的國際洗滌符號，如果有打叉就代表不能漂白。" },
+                { question: "早期台灣人的「束褲」主要是為了方便做什麼？", options: ["游泳", "下田工作防蟲", "睡覺", "方便尿尿"], correctIndex: 1, explanation: "將褲腳束緊可以防止蚊蟲、螞蝗鑽進褲管裡，適合農田工作。" },
+                { question: "台灣傳統婚禮，新娘為什麼要穿紅色的衣服？", options: ["比較顯眼", "代表喜慶與吉利", "比較不怕髒", "看新娘可憐"], correctIndex: 1, explanation: "紅色在漢人傳統文化中象徵喜氣洋洋與好運。" },
+                { question: "「繡花鞋」上面的圖案通常是用什麼做的？", options: ["蠟筆畫的", "針線繡的", "貼紙貼的", "無聊亂畫的"], correctIndex: 1, explanation: "繡花鞋是傳統手工藝，利用各種顏色的絲線在鞋面上繡出精美的圖案。" },
+                { question: "為什麼以前的衣服領口都比較高？", options: ["怕脖子冷", "禮節與端莊", "為了藏錢", "怕肉被看到"], correctIndex: 1, explanation: "在傳統社會中，高領設計被視為端莊保守、有禮節的表現。" },
+                { question: "「紅花布」最早是從哪裡流行起來的？", options: ["遠古時代", "民國 50、60 年代的紡織業", "去年", "日治時期"], correctIndex: 1, explanation: "隨著台灣紡織業蓬勃發展，印有大紅花朵的布料成了當時最流行的時尚。" },
+                { question: "「蛤仔衫」是指衣服上使用了哪種材質的扣子？", options: ["三角形", "圓圓的貝殼扣（珠光扣）", "正方形", "星星狀"], correctIndex: 1, explanation: "這是台語的說法，指衣服使用了帶有珠光的貝殼扣子作為裝飾。" },
+                { question: "衣服起「毛球」是因為什麼原因？", options: ["衣服生病了", "纖維摩擦斷裂捲在一起", "蟲咬的", "被狗咬的"], correctIndex: 1, explanation: "衣物表面的纖維因為頻繁摩擦而斷裂，並互相纏繞成小球狀。" },
+                { question: "「雨傘布」為什麼不透水？", options: ["有隱形玻璃", "高密度織法或防水塗層", "它很厚", "沒有作用"], correctIndex: 1, explanation: "經過防潑水加工與高密度織法，利用表面張力讓水滴無法穿透布料。" },
+                { question: "哪種顏色的衣服最容易招來「蚊子」？", options: ["白色", "黑色或深色", "黃色", "紫色"], correctIndex: 1, explanation: "蚊子喜歡停留在深色或黑色的物體表面，因為牠們有避光的習性。" },
+                { question: "衣服發霉了會出現什麼？", options: ["花朵", "小黑點或白斑", "雲朵", "五顏六色"], correctIndex: 1, explanation: "發霉通常會出現黑色、綠色或白色的霉斑，並且會散發刺鼻的霉味。" },
+                { question: "為什麼有些鞋子後面要加「反光條」？", options: ["為了發光", "讓晚上走路的人更安全", "為了省電", "耍帥"], correctIndex: 1, explanation: "反光條能在夜間反射車燈光線，提升行人的可見度與安全性。" },
+                { question: "「涼感衣」為什麼穿起來會涼涼的？", options: ["裡面有冰塊", "添加礦石粉末加速導熱", "它是冰做的", "可以把衣服放進冰箱"], correctIndex: 1, explanation: "布料中加入了導熱速度快的玉石或礦石粉末，能快速將體表熱能散發出去。" },
+                { question: "衣服標籤上的「熨斗畫個叉」代表什麼？", options: ["不能熨燙", "可以用力燙", "熨斗壞了", "熨斗熱度開到最強"], correctIndex: 0, explanation: "這代表布料不耐熱，如果用熨斗燙可能會融化或損壞衣物。" },
+                { question: "為什麼運動後，運動服要趕快換掉？", options: ["怕同學偷走", "避免汗水滋生細菌感冒或皮膚癢", "衣服會縮水", "耍帥"], correctIndex: 1, explanation: "濕透的衣服容易讓身體著涼，也容易滋生細菌導致皮膚過敏發癢。" },
+                { question: "在古代，黃色的衣服通常是誰穿的？", options: ["乞丐", "皇帝", "老師", "小朋友"], correctIndex: 1, explanation: "黃色在中國古代是皇室專用的尊貴顏色，平民百姓是不可以隨便穿黃衣的。" },
+                { question: "為什麼冬天睡覺最好穿「襪子」？", options: ["怕腳長大", "保持足部溫暖比較好睡", "怕被蚊子咬腳趾", "刺激足底快速長大"], correctIndex: 1, explanation: "腳底距離心臟最遠，容易冰冷，穿襪子保暖有助於血液循環與睡眠品質。" },
+                { question: "為什麼洗好的衣服要「曬太陽」？", options: ["讓衣服變漂亮", "殺菌和曬乾", "讓鄰居看", "讓衣服吸收維生素D"], correctIndex: 1, explanation: "陽光中的紫外線是天然的殺菌劑，還能讓衣服散發好聞的太陽味道。" },
+                { question: "如果你想讓自己看起來「變高」，應該穿什麼線條的衣服？", options: ["橫條紋", "直條紋", "格子紋", "曲線紋"], correctIndex: 1, explanation: "直條紋在視覺上有上下延伸的效果，會讓人看起來比較修長。" },
+                { question: "台灣哪一個節日一定要穿「新衣服」？", options: ["中秋節", "農曆新年", "國慶日", "國曆新年"], correctIndex: 1, explanation: "農曆過年穿新衣是傳統習俗，代表萬象更新、迎接新的一年。" },
+                { question: "台灣人最愛的「平民服裝」代表是什麼？", options: ["禮服", "T恤與牛仔褲", "古裝", "旗袍"], correctIndex: 1, explanation: "簡單舒適的 T恤配上百搭的牛仔褲，是台灣人日常最普遍的穿搭風格。" }
+            ],
+// 第四週：住：台灣的家 (共100題：老房子、現代生活、防災、地名文化)
+            3: [
+                { question: "早期台灣農村最常見的「L型」或「ㄇ字型」房子叫什麼？", options: ["四合院", "三合院", "獨棟別墅", "大樓"], correctIndex: 1, explanation: "三合院是台灣早期最常見的傳統民居，ㄇ字型的設計能凝聚家族情感且防風防盜。" },
+                { question: "三合院中間那個寬敞、可以曬稻米的大廣場叫什麼？", options: ["客廳", "埕（音同承）", "停車場"], correctIndex: 1, explanation: "「埕」是三合院前方的空地，平時用來曬穀物，也是小孩玩耍、鄰居聊天的核心空間。" },
+                { question: "老房子的屋頂上，如果有一對尖尖往上翹的裝飾，稱為什麼？", options: ["牛角", "燕尾", "雞冠"], correctIndex: 1, explanation: "燕尾脊是傳統建築中尊貴的象徵，早期通常是有當官或中舉人的家族才能使用這種屋頂。" },
+                { question: "以前沒有冷氣，老房子牆上的「鏤空花磚」主要是為了什麼？", options: ["裝飾", "通風和採光", "擋雨"], correctIndex: 1, explanation: "台灣氣候悶熱，鏤空的花磚不僅造型漂亮，還能讓風吹進屋內保持涼爽通風。" },
+                { question: "在澎湖，人們會用海底的什麼東西來蓋房子？", options: ["珊瑚礁（咾咕石）", "鯊魚骨頭", "珍珠"], correctIndex: 0, explanation: "澎湖缺乏樹木建材，先民就地取材使用海邊的珊瑚礁岩（咾咕石）來砌牆，防風又堅固。" },
+                { question: "為什麼以前的門口會放兩顆大石頭（石敢當）？", options: ["讓人坐著休息", "擋煞、避邪與鎮風", "用來磨牙"], correctIndex: 1, explanation: "石敢當通常立在路沖或風大的地方，民間信仰認為它可以鎮壓強風與驅除邪氣。" },
+                { question: "早期台灣人的床底下，通常會放什麼來防潮？", options: ["木炭", "冰塊", "麵粉"], correctIndex: 0, explanation: "木炭有非常好的吸濕與除臭效果，能讓木床保持乾燥，延長使用壽命。" },
+                { question: "「騎樓」是什麼？", options: ["可以騎馬的樓梯", "建築物一樓往內縮、讓行人遮雨的空間", "頂樓花園"], correctIndex: 1, explanation: "騎樓是適應台灣多雨、日照強烈氣候的特殊建築設計，非常體貼行人。" },
+                { question: "金門有一種很有名的防禦建築，專門用來躲海盜的？", options: ["碉堡", "銃樓", "涼亭"], correctIndex: 1, explanation: "銃（ㄔㄨㄥˋ）樓是早期金門洋樓常見的防禦設施，牆上有小孔可以伸出槍枝抵禦海盜。" },
+                { question: "早期台灣人用「泥土、稻草、穀殼」混合做成的磚頭叫什麼？", options: ["紅磚", "土墼（音同吉）磚", "大理石"], correctIndex: 1, explanation: "土墼磚（土角磚）是早期最經濟實惠的建材，冬暖夏涼，但非常怕長時間的大雨浸泡。" },
+                { question: "「窯洞」在台灣很罕見，但哪裡曾經有「糯米橋」這種古老建築？", options: ["南投國姓", "台北西門", "高雄旗津"], correctIndex: 0, explanation: "南投國姓鄉的糯米橋，是用糯米、紅糖與石灰混合成黏著劑來砌石塊，非常堅固。" },
+                { question: "三合院正中間、用來供奉祖先和神明的地方叫什麼？", options: ["廚房", "正身（大廳）", "廁所"], correctIndex: 1, explanation: "正身（大廳）是三合院中最神聖、地位最高的空間，用來祭祀神明與祖先。" },
+                { question: "以前的人為了防小偷，會在房子周圍種什麼植物當圍牆？", options: ["玫瑰", "刺竹", "仙人掌"], correctIndex: 1, explanation: "刺竹生長茂密且帶有堅硬的尖刺，是早期農村最天然也最有效的防禦圍牆。" },
+                { question: "為什麼老房子的門檻（門下的橫木）不能踩？", options: ["怕踩斷", "代表不尊重家神與主人", "會滑倒"], correctIndex: 1, explanation: "在傳統習俗中，門檻被視為家神的肩膀或主人的脊樑，踩門檻是非常不禮貌的行為。" },
+                { question: "「土角厝」最怕什麼天氣？", options: ["大太陽", "長時間的大雨（會溶化）", "颳風"], correctIndex: 1, explanation: "因為是用泥土做的，如果屋頂漏水或遇到大水災，泥土就會被泡軟甚至崩塌。" },
+                { question: "早期台灣人的廚房裡，那個大大的、用來煮飯的設施叫什麼？", options: ["瓦斯爐", "灶", "烤箱"], correctIndex: 1, explanation: "「大灶」是用磚土砌成的爐子，燒柴火來煮飯，上面通常還會供奉「灶神」保佑全家吃飽。" },
+                { question: "為什麼有些房子的牆壁上會掛「魚」形狀的裝飾？", options: ["代表主人愛吃魚", "象徵水，祈求防火", "為了好玩"], correctIndex: 1, explanation: "傳統木造房子最怕火災，魚生活在水裡，掛魚形裝飾有「以水剋火」的吉祥寓意。" },
+                { question: "三合院左右兩排的房子，稱為什麼？", options: ["護龍", "翅膀", "配房"], correctIndex: 0, explanation: "中間是正身，兩側垂直的房子叫做「護龍」，就像兩條龍保護著中間的大廳。" },
+                { question: "老房子常見的「紅磚」顏色，是因為土裡含有哪種物質？", options: ["顏料", "鐵質", "血液"], correctIndex: 1, explanation: "磚土中含有鐵質，經過高溫窯燒氧化後，就會呈現出漂亮的磚紅色。" },
+                { question: "以前的人沒有冰箱，會把食物放在哪裡通風保存？", options: ["菜籃", "氣櫥（櫥櫃）", "水桶"], correctIndex: 1, explanation: "氣櫥（菜櫥）的門會裝上紗網，可以保持通風防止食物太快壞掉，還能阻擋蒼蠅老鼠。" },
+                { question: "「吊腳樓」是蓋在哪裡的房子？", options: ["樹上", "水邊或山坡上", "地底下"], correctIndex: 1, explanation: "利用木樁將房子架高，可以適應崎嶇的山坡地形，或是防止水邊漲水淹進屋內。" },
+                { question: "為什麼有些房子的門頂會掛一塊紅布？", options: ["曬衣服", "慶祝入厝或喜事、討吉利", "擋太陽"], correctIndex: 1, explanation: "這叫「八仙彩」或紅布條，通常在搬新家、結婚或過年時掛上，增添喜氣與吉祥。" },
+                { question: "早期台灣人的「浴室」通常在哪裡？", options: ["房子外面", "客廳旁邊", "閣樓上"], correctIndex: 0, explanation: "以前沒有室內管線，廁所和浴室通常獨立蓋在房子外面，避免異味影響居住空間。" },
+                { question: "「閣樓」在以前主要是用來做什麼的？", options: ["睡房", "儲藏室或躲水災", "玩捉迷藏"], correctIndex: 1, explanation: "半樓仔（閣樓）可以堆放雜物與農具，遇到大淹水時，全家人還能爬上去避難。" },
+                { question: "台灣哪裡的「老街」是以巴洛克式建築風格著名的？", options: ["大溪老街", "墾丁大街", "夜市"], correctIndex: 0, explanation: "桃園大溪老街保留了日治時期流行的華麗巴洛克式立面牌樓，雕刻非常精緻。" },
+                { question: "台灣最高的建築物是哪一棟？", options: ["高雄 85 大樓", "台北 101", "台中歌劇院"], correctIndex: 1, explanation: "台北 101 樓高 508 公尺，曾是世界第一高樓，至今仍是台灣最高的地標。" },
+                { question: "台北 101 裡面那顆巨大的「金色大球」是用來做什麼的？", options: ["裝飾品", "風阻尼器（減少晃動）", "儲存黃金"], correctIndex: 1, explanation: "那是調諧質量阻尼器，像一個巨大的鐘擺，可以在強風或地震時抵銷大樓的晃動。" },
+                { question: "為什麼台灣的公寓頂樓常有「不鏽鋼大水塔」？", options: ["用來收集雨水", "儲存自來水確保水壓穩定", "拿來游泳"], correctIndex: 1, explanation: "水塔能儲存備用水，並利用高低落差產生水壓，讓樓下的住戶有穩定的自來水可以用。" },
+                { question: "現在大樓常見的「管理員」主要是負責什麼？", options: ["收快遞和看門", "幫忙煮飯", "帶小朋友玩遊戲"], correctIndex: 0, explanation: "管理員（保全）負責維護社區安全、代收包裹信件以及協助處理大樓日常事務。" },
+                { question: "進入家門前要「脫鞋」主要是為了什麼？", options: ["怕鞋子壞掉", "保持室內地板整潔衛生", "讓腳變大"], correctIndex: 1, explanation: "台灣氣候多雨潮濕，在玄關脫鞋能避免把室外的泥沙與細菌帶進屋內。" },
+                { question: "台灣家家戶戶幾乎都有的「大同電鍋」是哪種顏色最經典？", options: ["藍色", "紅色", "綠色"], correctIndex: 2, explanation: "經典的綠色大同電鍋耐用又多功能，是許多台灣家庭與出國留學生的必備神器。" },
+                { question: "為什麼台灣的冷氣機通常裝在窗戶上方？", options: ["比較帥", "冷空氣會往下沉，散熱效果好", "節省電線"], correctIndex: 1, explanation: "物理學上冷空氣比較重會往下沉，把冷氣裝在高處，冷風才能均勻降落讓整間屋子變涼。" },
+                { question: "「免治馬桶」的功能是什麼？", options: ["自動沖水洗屁屁", "自動修理馬桶", "自動加熱地板"], correctIndex: 0, explanation: "它配備有溫水噴嘴可以清洗屁股，冬天還有溫熱的馬桶座，非常衛生舒適。" },
+                { question: "現在很多人家裡會裝「指紋鎖」，它的好處是？", options: ["比較好看", "不怕忘記帶鑰匙", "鎖會發光"], correctIndex: 1, explanation: "手指就是鑰匙！再也不用擔心忘記帶鑰匙被鎖在門外，安全又方便。" },
+                { question: "台灣人家裡陽台常見的「鐵窗」最早是為了防小偷，現在則是什麼功能？", options: ["爬牆運動", "放置盆栽或晾衣服", "裝飾"], correctIndex: 1, explanation: "除了防墜落安全，鐵窗向外延伸的空間常被用來種花草盆栽或是晾曬衣物。" },
+                { question: "為什麼有些社區會有「垃圾集中場」？", options: ["讓垃圾聚會", "不用每天等垃圾車", "為了變香"], correctIndex: 1, explanation: "住戶隨時可以把垃圾丟到集中區，不用配合垃圾車廣播的時間跑出去倒垃圾。" },
+                { question: "大樓裡的「緊急出口燈」通常是什麼顏色？", options: ["紅色", "綠色", "藍色"], correctIndex: 1, explanation: "綠色在心理學上代表安全與通行，在火災濃煙中，綠光也比紅光更容易被肉眼辨識。" },
+                { question: "現在很多房子採用「隔音窗」，主要是為了阻擋什麼？", options: ["陽光", "噪音", "空氣"], correctIndex: 1, explanation: "利用較厚的玻璃與氣密設計，有效阻擋馬路上的車流聲與環境噪音，提升居住品質。" },
+                { question: "為什麼家裡的電線不能插太多在同一個延長線上？", options: ["延長線會累", "怕電流過載引發火災", "燈會變暗"], correctIndex: 1, explanation: "超過延長線的安全負載電流，電線會過熱甚至融化走火，非常危險！" },
+                { question: "台灣常用的屋頂材料「鐵皮」最怕什麼問題？", options: ["變色", "下雨聲音很大且夏天很熱", "變重"], correctIndex: 1, explanation: "金屬鐵皮導熱快，夏天像烤箱；且雨滴打在鐵皮上會產生巨大的噪音。" },
+                { question: "「太陽能板」通常裝在房子的哪裡？", options: ["地下室", "屋頂（曬得到太陽的地方）", "廁所"], correctIndex: 1, explanation: "裝在沒有遮蔽物的屋頂，才能吸收最多的太陽光轉化為環保的電能。" },
+                { question: "為什麼浴廁的地板通常要做「防滑」處理？", options: ["為了好看", "防止沾水後滑倒受傷", "為了省水"], correctIndex: 1, explanation: "浴室洗澡時充滿水和肥皂泡，非常滑，防滑地磚可以大幅降低跌倒的意外。" },
+                { question: "「變頻冷氣」的主要優點是什麼？", options: ["比較冷", "比較省電且溫度穩定", "聲音比較大"], correctIndex: 1, explanation: "達到設定溫度後，壓縮機會用較低的轉速維持溫度，不會一直走走停停，所以非常省電。" },
+                { question: "廚房裡的「抽油煙機」是裝在哪個東西上方？", options: ["冰箱", "瓦斯爐", "洗碗槽"], correctIndex: 1, explanation: "裝在瓦斯爐的正上方，才能第一時間把炒菜產生的熱油煙抽到室外。" },
+                { question: "現在的小朋友住大樓，通常透過什麼上下樓層？", options: ["繩索", "電梯", "溜滑梯"], correctIndex: 1, explanation: "電梯（升降機）是高樓層建築必備的垂直交通工具，省時又省力。" },
+                { question: "為什麼大樓要有「消防栓」？", options: ["拿來洗車", "發生火災時提供滅火水源", "拿來玩水戰"], correctIndex: 1, explanation: "消防栓連接了強大水壓的管線，是火災初期撲滅火勢的重要設備。" },
+                { question: "「對講機」的功能是什麼？", options: ["跟外星人說話", "跟樓下訪客或管理員通話", "唱歌用"], correctIndex: 1, explanation: "讓住戶不用下樓，就能確認訪客身分並遙控幫他們開大門。" },
+                { question: "家裡的「牆壁」通常是用什麼材料漆的？", options: ["巧克力", "油漆（乳膠漆）", "醬油"], correctIndex: 1, explanation: "乳膠漆無毒環保且色彩豐富，是現代家庭最常使用的室內牆面塗料。" },
+                { question: "為什麼有些人家裡會裝「全熱交換器」？", options: ["交換禮物", "讓室內通風且保持溫度", "煮飯用"], correctIndex: 1, explanation: "它可以在不開窗的情況下引進室外新鮮空氣，同時保留室內原本冷氣的溫度，非常節能。" },
+                { question: "在台灣，哪種家具通常是用來放神明與祖先牌位的？", options: ["電視櫃", "神明桌", "鞋櫃"], correctIndex: 1, explanation: "神明桌（佛桌）通常擺放在客廳最尊貴的位置，是台灣家庭信仰與慎終追遠的中心。" },
+                { question: "台灣經常有地震，蓋房子的時候哪種東西最重要？", options: ["漂亮的油漆", "堅固的耐震鋼筋結構", "大大的窗戶"], correctIndex: 1, explanation: "台灣位處地震帶，建築物的鋼筋綁紮與耐震設計是保護生命安全的第一防線。" },
+                { question: "地震發生時，在家裡應該躲在什麼地方？", options: ["窗戶旁邊", "堅固的桌子底下", "冰箱裡面"], correctIndex: 1, explanation: "記住「趴下、掩護、穩住」口訣，躲在堅固桌子底下保護頭部與頸部。" },
+                { question: "為什麼台灣的房子很多都裝有「避雷針」？", options: ["為了釣魚", "導引雷電防止房子損壞", "為了接收電視訊號"], correctIndex: 1, explanation: "高樓容易吸引閃電，避雷針能將雷電的巨大能量安全地導引到地下釋放。" },
+                { question: "遇到颱風時，家裡的玻璃窗可以貼什麼來增加強度？", options: ["貼紙", "膠帶（米字型）", "保鮮膜"], correctIndex: 1, explanation: "貼上米字型膠帶雖然不能防破，但能減少玻璃破裂時碎玻璃飛濺傷人的危險。" },
+                { question: "為什麼有些低窪地區的房子門口會裝「擋水板」？", options: ["怕貓進去", "預防大雨積水流進家裡", "擋風"], correctIndex: 1, explanation: "遇到颱風豪雨時，金屬擋水板可以快速架起，阻擋路面積水淹進屋內。" },
+                { question: "「防火巷」的作用是什麼？", options: ["曬衣服", "發生火災時阻隔延燒並讓消防員進入", "停車"], correctIndex: 1, explanation: "建築物之間保留法定空隙，能防止火勢燒到隔壁，也是消防人員救災的通道。" },
+                { question: "為什麼大樓不能隨便更改結構牆（主牆）？", options: ["牆壁會哭", "會影響房子的耐震安全", "會變醜"], correctIndex: 1, explanation: "剪力牆或承重牆是支撐整棟大樓重量與抵抗地震的骨幹，隨便打掉會非常危險！" },
+                { question: "家裡的「偵煙器」響了代表什麼？", options: ["要吃飯了", "可能有火災煙霧", "電池沒電"], correctIndex: 1, explanation: "住警器偵測到異常濃煙時會發出巨大警報聲，讓熟睡的家人能及早逃生。" },
+                { question: "為什麼睡覺前要檢查瓦斯有沒有關好？", options: ["怕瓦斯跑掉", "預防一氧化碳中毒或爆炸", "怕瓦斯偷吃東西"], correctIndex: 1, explanation: "瓦斯外洩遇到火花會氣爆；若是熱水器燃燒不完全則會產生致命的一氧化碳。" },
+                { question: "住在高樓層的人遇到地震，應該立刻搭電梯下樓嗎？", options: ["應該，比較快", "不應該，電梯可能會停電受困", "隨便"], correctIndex: 1, explanation: "地震時絕對不能搭電梯！很容易因為停電或軌道變形而被困在電梯車廂內。" },
+                { question: "「斜屋頂」的主要功能除了好看，還能做什麼？", options: ["讓人滑草", "快速排水避免漏水", "擋風"], correctIndex: 1, explanation: "傾斜的設計可以讓雨水順著重力快速流下，不會積在屋頂上造成漏水。" },
+                { question: "為什麼陽台的排水孔不能堵住？", options: ["怕水會渴", "下大雨時會淹進屋子裡", "會發臭"], correctIndex: 1, explanation: "如果排水孔被落葉或垃圾堵住，大雨時陽台就會變成水池，最後水會倒灌進客廳。" },
+                { question: "家裡如果要裝潢，必須先向誰申請許可？", options: ["班導師", "政府相關部門（室內裝修許可）", "超商服務員"], correctIndex: 1, explanation: "為了確保裝潢不會破壞建築安全結構與消防設備，必須依法向政府申請審查。" },
+                { question: "為什麼山區的房子（民宿）有些會蓋在「高腳」上？", options: ["為了看更遠", "減少土石流威脅並保持乾爽", "怕蛇爬上來"], correctIndex: 1, explanation: "架高設計可以讓小型的土石流或水流從屋底穿過，減少房子受到的直接衝擊。" },
+                { question: "「逃生梯」上為什麼不能堆放雜物？", options: ["雜物會壞", "會阻礙火災時的逃生路線", "影響美觀"], correctIndex: 1, explanation: "火災發生時通道若被鞋櫃或紙箱擋住，會嚴重拖延逃生時間，這是違法且致命的行為。" },
+                { question: "為什麼插座不能靠近水龍頭？", options: ["水會怕電", "怕漏電發生危險", "插頭會濕"], correctIndex: 1, explanation: "水是很好的導電體，手濕濕的去碰插座或電器極易觸電，非常危險！" },
+                { question: "台灣的房子牆壁通常很厚，主要是為了防什麼？", options: ["防風防雨防震", "躲貓貓", "怕人打破"], correctIndex: 0, explanation: "厚實的鋼筋混凝土牆能有效抵抗颱風的強風與頻繁的地震力。" },
+                { question: "地震後發現牆壁有「大 X 型」裂縫，該怎麼辦？", options: ["拿貼紙貼起來", "請專業技師檢查結構安全", "不理它"], correctIndex: 1, explanation: "這代表這道牆可能已經承受了強大的剪力破壞，內部結構受損，必須盡快請土木技師評估。" },
+                { question: "為什麼家裡要備有「緊急避難包」？", options: ["出國旅遊用", "災害發生時可以提了就走", "裝玩具用"], correctIndex: 1, explanation: "裡面裝有乾糧、水、手電筒和急救品，遇到大地震必須逃出家門時能維持基本生存。" },
+                { question: "台灣哪種地形的房子最需要注意土石流？", options: ["海邊", "山坡地", "市中心"], correctIndex: 1, explanation: "山坡地若水土保持不良，遇到連續豪大雨就很容易發生土石崩塌的災害。" },
+                { question: "「隔熱漆」漆在屋頂上是為了？", options: ["讓屋頂變色", "反射太陽光降低室內溫度", "防止漏水"], correctIndex: 1, explanation: "特殊的隔熱漆含有反射陽光的塗層，能大幅降低頂樓天花板的溫度，節省冷氣費。" },
+                { question: "為什麼大樓要有「避難層」？", options: ["睡覺用", "緊急時提供集結與疏散空間", "烤肉用"], correctIndex: 1, explanation: "通常是一樓或屋頂平台，火災時可以讓大量住戶在此安全集結或等待直升機救援。" },
+                { question: "窗戶上的「氣密條」是用來？", options: ["裝飾", "隔音與防風雨漏進來", "黏住窗戶"], correctIndex: 1, explanation: "橡膠氣密條能填滿窗框的縫隙，颱風天可以防雨水倒灌，平時也能隔絕室外噪音。" },
+                { question: "為什麼台灣的門窗常加裝「紗窗」？", options: ["防太陽", "防止蚊蟲飛進家裡", "遮醜"], correctIndex: 1, explanation: "台灣氣候濕熱多蚊蟲，紗窗能讓新鮮空氣流通，同時把討厭的蚊蠅擋在外面。" },
+                { question: "發生火災時，如果門把很「燙」，可以開門嗎？", options: ["可以", "不行，代表門外有大火", "用腳踢開"], correctIndex: 1, explanation: "門把發燙代表門外充滿高溫火焰與致命濃煙，此時千萬別開門，應用濕毛巾塞住門縫並開窗求救。" },
+                { question: "台灣哪一個地方的地名跟「房子」有關？", options: ["五股", "五甲", "五條港"], correctIndex: 0, explanation: "五股舊稱「五穀坑」，但也有一說是早期有五位股東合資在此開墾蓋屋而得名。" },
+                { question: "搬新家時，台灣人常會做的習俗稱為什麼？", options: ["入厝", "入學", "入睡"], correctIndex: 0, explanation: "入厝（入宅）是傳統搬家的慶祝儀式，祈求在新家能夠平安順利、家運昌隆。" },
+                { question: "「草屯」這個地名的由來，跟什麼東西有關？", options: ["割草", "堆放草鞋", "很多小草"], correctIndex: 1, explanation: "以前挑夫和商旅經過此地換草鞋，舊草鞋堆積如山（草鞋墩），後來改名為草屯。" },
+                { question: "入厝時，為什麼要帶一把「新掃帚」？", options: ["拿來打掃", "象徵掃走霉運", "拿來騎"], correctIndex: 1, explanation: "新掃把綁上紅緞帶，象徵把不好的霉運通通掃出門，迎接乾淨吉祥的新氣象。" },
+                { question: "「板橋」的地名由來是因為以前有一座什麼？", options: ["鐵橋", "木板搭建的橋", "天橋"], correctIndex: 1, explanation: "早期跨越當地溪流的是一座木板橋，大家習慣約在「板橋」見面，久了就變成地名。" },
+                { question: "台灣的原住民中，誰會蓋「石板屋」？", options: ["達悟族", "排灣族與魯凱族", "阿美族"], correctIndex: 1, explanation: "排灣族與魯凱族利用山區盛產的黑色頁岩，切成石板堆疊成冬暖夏涼的特色石板屋。" },
+                { question: "為什麼入厝時要在口袋放「紅包」？", options: ["買零食", "象徵發財與吉利", "給小偷"], correctIndex: 1, explanation: "口袋裝滿滿的紅包進新家，象徵將財氣帶入家中，未來會財源廣進！" },
+                { question: "「鹿港」這個名字是因為以前有很多什麼動物？", options: ["老虎", "鹿", "貓咪"], correctIndex: 1, explanation: "早期台灣西部平原有很多梅花鹿，鹿港曾是鹿皮與鹿角輸出的重要港口，因而得名。" },
+                { question: "搬家時，長輩常說要從舊家帶一桶「米」進新家，代表？", options: ["怕沒飯吃", "象徵衣食無缺、財源廣進", "拿來餵雞"], correctIndex: 1, explanation: "米缸裝滿滿的米貼上「滿」字，代表搬進新家後家裡永遠不愁吃穿。" },
+                { question: "「九份」這個地名的由來，是因為以前那裡只有幾戶人家？", options: ["100 戶", "9 戶", "1 戶"], correctIndex: 1, explanation: "傳說早期山上只有九戶人家，每次有人下山買物資都要買「九份」，久而久之就成了地名。" },
+                { question: "在台灣，房子的「二樓」在某些長輩眼中代表什麼？", options: ["很高", "台語諧音「利（利潤）」", "沒意義"], correctIndex: 1, explanation: "台語的「二」發音近似「利」，對於做生意的人來說，住在二樓有獲利的吉祥諧音。" },
+                { question: "為什麼有些大樓「沒有 4 樓」或是用 3A 代替？", options: ["怕迷路", "數字 4 的諧音不吉利", "4 樓太重"], correctIndex: 1, explanation: "因為「4」的發音在中文裡與「死」相近，出於忌諱，許多建商會避開這個樓層號碼。" },
+                { question: "「宜蘭」的舊地名稱為什麼？", options: ["打狗", "噶瑪蘭", "諸羅"], correctIndex: 1, explanation: "宜蘭舊稱「噶瑪蘭」，是原住民族噶瑪蘭族（Kavalan）居住的地方。" },
+                { question: "以前的人蓋房子前會請「地理師（風水師）」看什麼？", options: ["看風景", "看風水與朝向", "看電視"], correctIndex: 1, explanation: "傳統觀念認為房子的座向與周圍環境（風水）會影響居住者的運勢與健康。" },
+                { question: "「左營」這個地名的由來跟什麼有關？", options: ["跑步", "軍隊駐紮的營地", "做生意"], correctIndex: 1, explanation: "明鄭時期軍隊實施屯墾，在當地設立了「左營」這個軍事營地名稱，流傳至今。" },
+                { question: "入厝時「滾紅包」或滾銅板是為了祈求什麼？", options: ["跌倒", "財源滾滾來", "好玩"], correctIndex: 1, explanation: "在客廳地板滾動撒落硬幣，會發出清脆的錢幣聲，象徵金銀財寶滾滾而來。" },
+                { question: "「萬華」的舊名叫做「艋舺」，意思是？", options: ["大石頭", "小船", "森林"], correctIndex: 1, explanation: "「艋舺」是平埔族語 Mankah 的音譯，意思是獨木舟，因為早期這裡是原住民聚集交易的渡口。" },
+                { question: "為什麼有些房子的樑柱上會貼「大吉大利」？", options: ["裝飾", "祈求房子穩固、全家平安", "為了省錢"], correctIndex: 1, explanation: "上樑是蓋房子最重要的儀式，貼上紅紙祈求建築過程順利，未來居住平安大吉。" },
+                { question: "「鳳山」的地名是因為那裡的山長得像什麼？", options: ["雞", "鳳凰", "恐龍"], correctIndex: 1, explanation: "因當地有一座山脈（鳳山丘陵）起伏的形狀猶如一隻展翅飛舞的鳳凰而得名。" },
+                { question: "入厝當天一定要開火「煮甜湯圓」，代表？", options: ["嘴饞", "圓圓滿滿、生活甜蜜", "為了請客"], correctIndex: 1, explanation: "新爐灶第一次開火煮甜湯圓請大家吃，象徵著全家人在新家生活圓滿甜蜜。" },
+                { question: "「竹塹」是哪一個城市的舊稱？", options: ["新竹", "台中", "台南"], correctIndex: 0, explanation: "新竹舊稱竹塹（ㄑㄧㄢˋ），早期原住民道卡斯族竹塹社居住於此，後來漢人在此種植竹城防禦。" },
+                { question: "為什麼有些房子前面會種「石榴」樹？", options: ["代表酸甜", "象徵多子多孫", "為了遮陽"], correctIndex: 1, explanation: "石榴切開後裡面有滿滿的紅色種子，在傳統文化中是「多子多孫多福氣」的最棒象徵。" },
+                { question: "「打狗」是哪一個城市的舊稱？", options: ["台北", "高雄", "屏東"], correctIndex: 1, explanation: "高雄舊稱「打狗」，源自平埔族馬卡道族語「Takau」（竹林之意）的音譯。" },
+                { question: "在台灣，如果是租來的房子，我們稱房屋的主人為？", options: ["房東", "房王", "房神"], correctIndex: 0, explanation: "出租房子的人稱為「房東」，租房子住的人則稱為「房客」。" },
+                { question: "大家最希望住到的「好房子」通常是？", options: ["漏水的房子", "溫暖平安、全家人在一起的房子", "沒有門的房子"], correctIndex: 1, explanation: "房子再大再華麗，也比不上全家人能平平安安、快快樂樂聚在一起的溫暖感覺！" }
+            ],
 
-function showToast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2000);
-}
+            // 第五週：行：台灣人的移動 (共100題：古道、軌道、公路、海空)
+            4: [
+                { question: "早期台灣載運貨物、最出名的動物拉車是什麼？", options: ["馬車", "牛車", "狗拉雪橇"], correctIndex: 1, explanation: "牛隻力氣大且耐苦，牛車是台灣早期農村最普遍的運輸與交通工具。" },
+                { question: "「草嶺古道」最著名的石碑「虎字碑」，是為了鎮壓什麼？", options: ["老虎", "狂風", "大雨"], correctIndex: 1, explanation: "清朝總兵劉明燈行經此地遇到狂風，便寫下「虎」字立碑，取「風從虎」之意來鎮壓強風。" },
+                { question: "以前的人在山裡用竹子或繩索搭建、走起來晃動很大的橋叫什麼？", options: ["天橋", "吊橋", "拱橋"], correctIndex: 1, explanation: "吊橋利用懸索支撐，能輕易跨越深谷或寬闊的溪流，是早期山區重要的交通設施。" },
+                { question: "「阿朗壹古道」是台灣少數沒有什麼經過的海岸線？", options: ["螃蟹", "公路", "飛機"], correctIndex: 1, explanation: "它是台灣僅存沒有公路開通的原始海岸線，保留了最豐富的自然生態與絕美海景。" },
+                { question: "早期淡水河上常見的、船頭畫有眼睛的木船叫什麼？", options: ["龍舟", "戎克船（紅頭仔）", "潛水艇"], correctIndex: 1, explanation: "戎克船是早期航行於台灣與大陸間的帆船，紅頭船則是主要航行於淡水河內的貨船。" },
+                { question: "為什麼以前的船頭要畫「眼睛」？", options: ["為了好看", "祈求船隻能看清航道、平安回航", "為了嚇魚"], correctIndex: 1, explanation: "討海人相信船是有生命的，畫上眼睛（龍目）可以讓船避開暗礁與危險，順利找到回家的路。" },
+                { question: "「輕便鐵道」早期是靠什麼動力來移動的？", options: ["電力", "人力推行", "汽油"], correctIndex: 1, explanation: "早期的輕便車（台車）沒有引擎，是靠工人在後面用人力推動車廂在軌道上滑行。" },
+                { question: "早期台灣山區運送木材、懸掛在空中的運輸工具叫什麼？", options: ["纜車", "流籠", "降落傘"], correctIndex: 1, explanation: "流籠是利用鋼索橫跨山谷，藉由高低落差或滑輪系統來運送沉重的木材或物資。" },
+                { question: "「浸水營古道」是以前哪兩個地方之間重要的往來道路？", options: ["台北與桃園", "屏東與台東", "台中與南投"], correctIndex: 1, explanation: "它橫越中央山脈，是早期南部排灣族、平埔族與漢人來返屏東與台東最重要的越嶺道。" },
+                { question: "早期台灣人的「轎子」主要是由幾個人抬的？", options: ["1人", "2到4人", "100人"], correctIndex: 1, explanation: "轎子是由兩人或四人用肩膀扛起兩根長竿來移動，是古代有錢人或當官的代步工具。" },
+                { question: "「五分車」名字的由來是因為它的軌道寬度只有標準軌的？", options: ["五分之一", "一半（約五十分）", "五倍長"], correctIndex: 1, explanation: "糖業鐵路的軌距約為 762 毫米，大約是國際標準軌距的一半，所以被民間暱稱為五分車。" },
+                { question: "早期載運「甘蔗」最出名的火車是什麼車？", options: ["高鐵", "五分車（糖鐵）", "捷運"], correctIndex: 1, explanation: "五分車穿梭在南部的甘蔗田裡，載滿甘蔗運往糖廠，是許多阿公阿嬤童年追火車抽甘蔗的回憶。" },
+                { question: "「人力車（拉車）」最早是從哪個國家傳進台灣的？", options: ["美國", "日本", "英國"], correctIndex: 1, explanation: "人力拉車起源於日本（被稱為東洋車），在日治時期引進台灣，成為當時都市裡的計程車。" },
+                { question: "為什麼早期山區的道路都要彎彎曲曲的？", options: ["為了好玩", "配合地形、減緩坡度", "怕人走太快"], correctIndex: 1, explanation: "山坡太陡直上直下爬不上去，採用「之」字型的彎曲路線可以讓坡度變平緩，人畜才走得動。" },
+                { question: "「挑夫」在古道上主要是負責什麼工作？", options: ["唱歌", "用肩膀扛運貨物", "帶路"], correctIndex: 1, explanation: "挑夫是古代的物流快遞員，他們用扁擔挑著沉重的鹽巴、茶葉等物資翻山越嶺。" },
+                { question: "台灣哪一條路曾被稱為「黃金之路」，因為產金礦？", options: ["忠孝東路", "金瓜石古道", "椰林大道"], correctIndex: 1, explanation: "金瓜石與九份早期因為發現金礦而繁華，這條運送黃金與礦工往來的古道就被稱為黃金之路。" },
+                { question: "以前過河如果沒有橋，會坐在什麼上面拉繩索渡河？", options: ["浴缸", "竹筏", "輪胎"], correctIndex: 1, explanation: "先民會用竹子綁成竹筏浮在水面上，乘客站在上面，船夫藉由拉扯橫跨兩岸的繩索來渡河。" },
+                { question: "「官道」在古代是指什麼樣的路？", options: ["官員專用的路", "政府整修的主要幹道", "迷宮"], correctIndex: 1, explanation: "官道是由官方（政府）開闢並負責維修的大馬路，主要是為了傳遞公文與軍隊調動使用。" },
+                { question: "「驛站」在古代的功能是什麼？", options: ["買玩具", "提供換馬、休息與傳遞公文的地方", "游泳池"], correctIndex: 1, explanation: "驛站就像古代的高速公路休息站，讓趕路的信差可以換一匹體力充沛的馬繼續送信。" },
+                { question: "早期台灣的火車頭是燒什麼產生動力的？", options: ["瓦斯", "煤炭", "電池"], correctIndex: 1, explanation: "蒸汽火車需要不斷把黑色的煤炭鏟進火爐燃燒，將水煮沸產生蒸汽來推動火車前進。" },
+                { question: "「石板路」的好處是什麼？", options: ["比較軟", "下雨天比較不會泥濘", "會發光"], correctIndex: 1, explanation: "泥土路下雨會變爛泥巴，鋪上石板後路面堅固平整，即使下大雨行人與牛車也能通行。" },
+                { question: "「淡蘭古道」連接的是哪兩個地方？", options: ["淡水與宜蘭", "淡水與蘭嶼", "台東與宜蘭"], correctIndex: 0, explanation: "淡水廳（大台北地區）到噶瑪蘭廳（宜蘭）之間的越嶺古道，是北部最早的東西向交通要道。" },
+                { question: "以前有一種叫「手搖車」的交通工具，它是走在哪裡的？", options: ["馬路", "鐵軌", "水裡"], correctIndex: 1, explanation: "手搖車是鐵路維修人員巡視軌道用的輕便車，靠兩個人一上一下壓動把手來驅動前進。" },
+                { question: "古道上的「土地公廟」通常代表什麼意義？", options: ["超商", "祈求路途平安與分界點", "終點線"], correctIndex: 1, explanation: "山路危險，旅人會在古道最高點或危險處建土地公廟，祈求山神保佑一路平安。" },
+                { question: "早期台灣最常見的腳踏車後面通常裝有什麼？", options: ["噴射器", "大大的載貨鐵架", "冰箱"], correctIndex: 1, explanation: "早期的「武車」非常堅固，後座裝有粗壯的鐵架，可以用來載豬肉、送瓦斯或載小孩。" },
+                { question: "台灣速度最快、連結南北的軌道交通是什麼？", options: ["台鐵", "台灣高鐵", "捷運"], correctIndex: 1, explanation: "台灣高鐵最高營運時速可達 300 公里，從台北到高雄最快只要一個半小時。" },
+                { question: "高鐵最南端的車站目前是哪一站？", options: ["台南站", "左營站", "屏東站"], correctIndex: 1, explanation: "目前台灣高鐵的最南站是位於高雄市的「左營站」，未來有計畫延伸至屏東。" },
+                { question: "高鐵的車頭形狀為什麼尖尖的？", options: ["比較可愛", "減少空氣阻力與降低噪音", "比較輕"], correctIndex: 1, explanation: "流線型的尖頭設計符合空氣動力學，能讓列車高速劃破空氣，並減少進入隧道時的音爆聲。" },
+                { question: "台北捷運的符號是由哪兩個英文字母組成的變體？", options: ["AB", "m（由兩個「人」字組成）", "TV"], correctIndex: 1, explanation: "標誌是台北（Taipei）的「T」與捷運（Metro）的「M」組合，看起來也像四通八達的軌道。" },
+                { question: "捷運車廂內「藍色」的椅子通常是什麼座？", options: ["國王座", "博愛座", "午睡座"], correctIndex: 1, explanation: "深藍色的博愛座是特別保留給長者、孕婦、行動不便或有隱性需求的人乘坐的。" },
+                { question: "在捷運站內，哪一條顏色的線「絕對不能跨越」以免危險？", options: ["藍色", "黃色", "綠色"], correctIndex: 1, explanation: "月台邊緣的黃色警戒線是為了防止乘客太靠近軌道而被進站列車撞到或掉落。" },
+                { question: "台灣哪一個城市的捷運有「美麗島站」光之穹頂大廳？", options: ["台北", "高雄", "桃園"], correctIndex: 1, explanation: "高雄捷運美麗島站的光之穹頂，由四千多片彩繪玻璃組成，被譽為全世界最美的車站之一。" },
+                { question: "台鐵的「普悠瑪號」是以哪個族群的語言命名的？", options: ["阿美族", "卑南族", "布農族"], correctIndex: 1, explanation: "普悠瑪（Puyuma）是卑南族的族語，也是台東卑南鄉的舊稱，代表著尊貴與團結。" },
+                { question: "「悠遊卡、一卡通」除了搭車，還能在哪裡買東西？", options: ["銀行", "便利商店", "家具行"], correctIndex: 1, explanation: "這些電子票證非常強大，除了搭捷運公車，還可以在超商、飲料店「嗶」一下就結帳。" },
+                { question: "搭乘自動扶梯時，在台灣習慣上大家會靠哪一邊站立？", options: ["左邊", "右邊", "中間"], correctIndex: 1, explanation: "雖然現在宣導「緊握扶手、站穩踏階」，但長期以來台灣人養成了靠右站立、讓出左側的習慣。" },
+                { question: "為什麼捷運站內「禁止飲食」？", options: ["怕乘客吃太飽", "為了環境清潔並防止老鼠蟑螂咬壞電線", "東西太貴"], correctIndex: 1, explanation: "禁止飲食能避免食物碎屑掉落，確保站內乾淨，防範老鼠啃咬精密的號誌電線引發危險。" },
+                { question: "台灣哪裡的火車是繞著山爬、還能看日出的？", options: ["阿里山森林鐵路", "內灣線", "集集線"], correctIndex: 0, explanation: "阿里山林鐵是世界著名的高山鐵路，以螺旋環繞與「之」字型折返的方式爬上高山。" },
+                { question: "火車進站時，發出的「嗶——」長鳴聲是為了？", options: ["唱歌", "警示乘客注意安全", "慶祝抵達"], correctIndex: 1, explanation: "響亮的汽笛聲是為了提醒月台上的乘客退後，以及警告平交道上的車輛千萬別闖入。" },
+                { question: "哪一種車被稱為「波音 747 火車」，速度極快？", options: ["區間車", "自強號（尤其是 EMU3000）", "藍皮車"], correctIndex: 1, explanation: "EMU3000型城際列車外觀黑白簡約非常帥氣，舒適平穩且速度快，是台鐵最新主力。" },
+                { question: "台灣高鐵的車體顏色主要是什麼？", options: ["紅色與藍色", "白色與橘色", "全綠色"], correctIndex: 1, explanation: "高鐵車身以白色為底，配上亮眼的橘色與黑色線條，看起來非常有速度感。" },
+                { question: "「輕軌」跟「捷運」最大的差別是？", options: ["輕軌比較重", "輕軌通常行駛在路面上且有平交道", "輕軌沒有輪子"], correctIndex: 1, explanation: "輕軌（如高雄、新北輕軌）大多行駛在一般道路上，需要跟汽車一樣停等紅綠燈。" },
+                { question: "在火車站看時刻表，「開車」是指什麼？", options: ["汽車開動", "火車出發時間", "開始修車"], correctIndex: 1, explanation: "時刻表上的「開車」時間，就是火車準時關閉車門離開月台的發車時間，千萬別遲到！" },
+                { question: "搭火車時，如果買到「站票」代表？", options: ["要站在屋頂", "沒有固定座位，只能站著或找空位坐", "票是站著印的"], correctIndex: 1, explanation: "站票（無座票）沒有專屬座位，必須站在走道，如果看到沒人坐的空位才可以暫時坐下。" },
+                { question: "哪一條鐵路支線以「放天燈」聞名？", options: ["集集線", "平溪線", "深澳線"], correctIndex: 1, explanation: "搭乘平溪線到十分或平溪車站，可以在鐵道旁體驗施放祈福天燈的浪漫活動。" },
+                { question: "火車軌道下面為什麼要舖很多「石頭」？", options: ["怕軌道跑掉", "排水、吸震及固定軌道", "為了好看"], correctIndex: 1, explanation: "這些碎石叫「道碴」，能有效吸收火車壓過時的巨大震動力，也能讓下雨時快速排水。" },
+                { question: "「自動驗票閘門」要感應哪裡才能開門？", options: ["你的臉", "票卡感應區", "你的手掌"], correctIndex: 1, explanation: "將車票或悠遊卡輕觸閘門上的感應區（通常有標示圖案），系統讀取後擋板就會打開。" },
+                { question: "火車上的「車長小姐/先生」主要是負責？", options: ["煮飯", "驗票與服務乘客安全", "開火車"], correctIndex: 1, explanation: "列車長負責巡視車廂驗票、處理旅客突發狀況，並確保列車安全抵達目的地。" },
+                { question: "哪種火車被暱稱為「紅斑馬」？", options: ["普悠瑪號", "自強號 EMU1200 型", "莒光號"], correctIndex: 1, explanation: "早期這款自強號車頭塗有紅色與白色的相間條紋，看起來就像一隻紅色斑馬。" },
+                { question: "為什麼有些火車叫「區間車」？", options: ["只在區間隧道跑", "每站都停，服務短距離通勤", "只有區間人能搭"], correctIndex: 1, explanation: "區間車就像火車版的公車，大站小站都會停靠，主要服務短程上下班、上下學的旅客。" },
+                { question: "在台灣，火車是靠哪一邊行駛的？", options: ["右側", "左側", "中間"], correctIndex: 1, explanation: "台灣的鐵路系統是在日治時期建立的，所以延續了日本鐵路「靠左行駛」的規定。" },
+                { question: "台灣人最常用的代步工具、密度世界第一的是？", options: ["戰車", "機車（摩托車）", "帆船"], correctIndex: 1, explanation: "台灣素有「機車王國」之稱，因為機車機動性高、好停車，幾乎家家戶戶都有一台。" },
+                { question: "騎機車一定要戴什麼才安全且不會被罰錢？", options: ["太陽眼鏡", "安全帽", "耳機"], correctIndex: 1, explanation: "安全帽是機車騎士的保命符，能在車禍發生時吸收撞擊力，保護脆弱的頭部。" },
+                { question: "台灣馬路上的「綠色神盾」或「綠色自行車道」是給誰走的？", options: ["坦克車", "腳踏車", "行人"], correctIndex: 1, explanation: "漆成綠色的車道是專門為自行車規劃的安全路線，汽車和機車是不可以開上去的。" },
+                { question: "路口閃爍的「小綠人」是什麼標誌？", options: ["賽跑比賽", "行人專用號誌", "燈壞了"], correctIndex: 1, explanation: "台灣首創的動態小綠人，會以生動的動畫告訴行人現在可以安全過馬路。" },
+                { question: "當小綠人開始「快跑」時，代表？", options: ["比賽開始", "行人通行時間快結束了", "綠燈壞了"], correctIndex: 1, explanation: "小綠人跑得越快，代表綠燈剩下的秒數越少，提醒行人要加快腳步或停下等下一個綠燈。" },
+                { question: "「YouBike」是什麼顏色的最經典？", options: ["藍色", "黃色（橘色）", "黑色"], correctIndex: 1, explanation: "微笑單車 YouBike 以亮眼的黃橘色車身為標誌，是台灣非常成功的公共自行車系統。" },
+                { question: "在台灣，汽車和腳踏車是靠哪一邊行駛的？", options: ["左邊", "右邊", "隨便走"], correctIndex: 1, explanation: "台灣的道路交通規則是「靠右行駛」，駕駛座則設計在車輛的左側。" },
+                { question: "馬路上畫有「網狀黃線」的地方可以停車嗎？", options: ["可以", "不行，要保持淨空以免堵塞", "只能停腳踏車"], correctIndex: 1, explanation: "網狀黃線通常畫在消防局門口或重要路口，必須隨時保持淨空，絕對禁止暫停。" },
+                { question: "「隧道」裡面通常不能做什麼動作？", options: ["睡覺", "變換車道", "開燈"], correctIndex: 1, explanation: "隧道內空間狹窄視線差，隨便切換車道非常容易發生嚴重車禍，所以通常畫雙白線禁止變換。" },
+                { question: "過馬路要走「斑馬線」，為什麼叫斑馬線？", options: ["斑馬發明的", "黑白相間長得像斑馬的條紋", "給斑馬走的"], correctIndex: 1, explanation: "漆在路面上的白色平行條紋，因為跟柏油路形成黑白相間的樣子，就像斑馬的紋路。" },
+                { question: "路邊的「紅線」代表什麼？", options: ["可以停很久", "絕對禁止停車", "只能停紅色的車"], correctIndex: 1, explanation: "紅線全天候禁止停車與臨時停車，如果停在紅線上是會被警察開單拖吊的！" },
+                { question: "「黃色標線」代表可以做什麼？", options: ["停一整天", "臨時停車（人要在車上且不超過三分鐘）", "畫畫"], correctIndex: 1, explanation: "黃線允許短暫的乘客上下車或裝卸貨物，但駕駛不能離開車子，且不能停太久。" },
+                { question: "開車或坐車「繫安全帶」是為了？", options: ["怕被警察抓", "發生撞擊時保護身體不飛出去", "比較帥"], correctIndex: 1, explanation: "安全帶能在緊急煞車或發生車禍時，將乘客牢牢固定在座位上，是最重要的保命裝備。" },
+                { question: "台灣有一種交通工具叫「電動滑板車」，現在可以騎上馬路嗎？", options: ["可以", "原則上不行，要在封閉區域使用", "只有小朋友可以"], correctIndex: 1, explanation: "目前法規原則上禁止電動滑板車行駛於一般道路，以確保騎士與其他用路人的安全。" },
+                { question: "路上的「救護車」發出警報聲時，其他車輛應該？", options: ["加速超車", "減速靠邊避讓", "停在路中間"], correctIndex: 1, explanation: "聽到救災車輛的鳴笛聲，所有車輛都必須立刻向兩側避讓，讓出中間通道救人。" },
+                { question: "「公車」後門上方的紅燈亮起時，代表？", options: ["車子壞了", "有人按下鈴要下車", "司機要休息了"], correctIndex: 1, explanation: "這代表已經有乘客按下「下車鈴」，司機會在下一站靠站開門，不用重複一直按喔。" },
+                { question: "台灣的「國道（高速公路）」最高速限大約是多少？", options: ["50公里", "100~110公里", "300公里"], correctIndex: 1, explanation: "大部分高速公路的最高速限是 100 或 110 公里，開太快或開太慢都會被罰款。" },
+                { question: "高速公路上有一種藍色牌子寫「ETC」，是做什麼的？", options: ["喝咖啡的地方", "電子收費系統", "照相機"], correctIndex: 1, explanation: "車子經過門架時，ETC 系統會自動感應車上的 eTag 貼紙來扣取過路費，不用停車繳費。" },
+                { question: "為什麼不能在馬路上「玩滑板」或「溜直排輪」？", options: ["會磨壞路面", "容易發生交通意外", "滾輪太吵"], correctIndex: 1, explanation: "馬路是給汽機車行駛的，滑板速度快且難以煞車，在馬路上玩非常容易被車撞到。" },
+                { question: "行人過馬路時，如果沒有紅綠燈，應該？", options: ["直接衝過去", "左看右看再左看，確認沒車再過", "閉眼睛走"], correctIndex: 1, explanation: "過馬路一定要「停看聽」，確認左右兩邊都沒有來車，並且走在行人穿越道上才安全。" },
+                { question: "「內環、外環」通常是指繞著什麼跑的路？", options: ["操場", "城市圓環或快速道路", "廁所"], correctIndex: 1, explanation: "外環道是為了讓不想進入市區塞車的車輛，可以從城市外圍繞過去的快速道路。" },
+                { question: "公車專用道通常在馬路的哪裡？", options: ["最旁邊", "中間或指定車道", "橋下"], correctIndex: 1, explanation: "為了讓公車不會塞在車陣中，許多大城市（如台北、台中）會在馬路中央設立公車專用道。" },
+                { question: "為什麼下雨天騎車要特別小心「標線」或「水溝蓋」？", options: ["怕它們會痛", "它們很滑，容易導致摔車", "它們會噴水"], correctIndex: 1, explanation: "漆在路面上的白線和金屬水溝蓋，沾水後摩擦力會大幅降低，騎車壓過去極易打滑摔倒。" },
+                { question: "「行人穿越道」除了斑馬線，還有一種架在空中的叫？", options: ["雲霄飛車", "天橋", "吊車"], correctIndex: 1, explanation: "天橋（陸橋）讓行人可以安全地從空中跨越車流龐大、危險的大馬路。" },
+                { question: "「行人地下道」通常蓋在什麼地方？", options: ["森林", "交通繁忙的大路口下方", "地下室"], correctIndex: 1, explanation: "在車流密集不適合蓋天橋的路口，會向下挖出地下道，讓行人能安全穿越。" },
+                { question: "台灣最大的國際機場位於哪裡？", options: ["台北松山", "桃園", "高雄小港"], correctIndex: 1, explanation: "桃園國際機場是台灣最大、航班最密集的國家門戶，是多數人出國的第一站。" },
+                { question: "飛機起飛前，為什麼要關閉手機或切換成「飛航模式」？", options: ["怕電話費太貴", "避免干擾飛機導航通訊", "怕電池爆炸"], correctIndex: 1, explanation: "手機發射的電磁波可能會干擾飛機駕駛艙精密的導航儀器，影響飛行安全。" },
+                { question: "台灣唯一有「熱氣球嘉年華」的地方是哪裡？", options: ["台北", "台東鹿野", "台南"], correctIndex: 1, explanation: "台東鹿野高台因為地形與氣流穩定，每年夏天都會舉辦繽紛壯觀的熱氣球嘉年華。" },
+                { question: "搭船時，如果怕暈船應該坐哪裡比較穩？", options: ["船頭", "船的中後部且靠近水面", "船頂"], correctIndex: 1, explanation: "船頭受海浪衝擊晃動最大，船隻中後方的重心位置是最平穩的，比較不容易暈船。" },
+                { question: "「燈塔」的主要功能是什麼？", options: ["照亮天空", "指引船隻航向、避開暗礁", "抓魚用"], correctIndex: 1, explanation: "燈塔就像海上的紅綠燈，在夜間發出強光為船隻指引方向，警告附近有危險暗礁。" },
+                { question: "台灣最北端的燈塔叫什麼？", options: ["鵝鑾鼻燈塔", "富貴角燈塔", "鼻頭角燈塔"], correctIndex: 1, explanation: "富貴角燈塔位於新北市石門區，是台灣本島最北端的燈塔，有著獨特的黑白相間條紋。" },
+                { question: "鵝鑾鼻燈塔位於台灣的哪個縣市？", options: ["宜蘭", "屏東", "台中"], correctIndex: 1, explanation: "它位於屏東縣的墾丁國家公園內，是台灣本島最南端的標誌性純白燈塔。" },
+                { question: "「藍皮解憂號」是指哪一種火車？", options: ["高鐵", "復古的普快車", "捷運"], correctIndex: 1, explanation: "這是台鐵唯一可以開窗、吹著海風的藍色復古老火車，行駛在美麗的南迴線上。" },
+                { question: "為什麼以前的公共汽車要配一位「車掌小姐」？", options: ["唱歌給乘客聽", "剪票、報站名與維持秩序", "幫司機開門"], correctIndex: 1, explanation: "以前沒有悠遊卡和自動下車鈴，車掌小姐負責賣票剪票、吹哨子提醒司機靠站。" },
+                { question: "台灣哪裡的「渡輪」可以連機車一起騎上去？", options: ["淡水到八里", "高雄鼓山到旗津", "蘭嶼到綠島"], correctIndex: 1, explanation: "高雄的旗津渡輪是非常特別的交通工具，一樓載滿機車，二樓載客，幾分鐘就能過海。" },
+                { question: "在飛機上，空服員示範「氧氣罩」掉下來時，應該先幫誰戴？", options: ["先幫小孩戴", "自己先戴好再幫小孩戴", "誰都不要戴"], correctIndex: 1, explanation: "高空缺氧幾秒鐘就會昏迷，大人必須確保自己清醒戴好氧氣罩，才有能力去救小孩！" },
+                { question: "「直升機」為什麼不需要跑道就能起飛？", options: ["因為它很輕", "靠螺旋槳旋轉產生升力垂直起降", "它有彈簧"], correctIndex: 1, explanation: "頭頂上巨大的旋翼高速旋轉把空氣往下壓，產生強大的向上推力，所以能原地起飛。" },
+                { question: "台灣哪裡的機場可以看到飛機就在頭頂上飛過（飛機巷）？", options: ["桃園機場", "台北松山機場", "台東機場"], correctIndex: 1, explanation: "台北市濱江街 180 巷剛好在松山機場跑道末端，飛機起降時會從頭頂呼嘯而過，超級震撼。" },
+                { question: "搭乘「纜車」時遇到強風，通常會？", options: ["飛起來", "暫時停駛以策安全", "跑更快"], correctIndex: 1, explanation: "纜車懸掛在半空中，風太大會造成車廂劇烈搖晃，所以只要風速過大就會自動停駛。" },
+                { question: "「拖網船」是用來做什麼的交通工具？", options: ["載客人", "捕魚", "比賽"], correctIndex: 1, explanation: "漁船在海裡拖著一張巨大的漁網，把經過的魚群一網打盡，是重要的捕魚方式。" },
+                { question: "為什麼飛機的窗戶是「圓弧形」而不是方形的？", options: ["比較好看", "圓形能平均分散壓力，比較安全不容易裂", "視野比較好"], correctIndex: 1, explanation: "飛機內外壓力差很大，方形窗戶的尖角容易產生應力集中而破裂，圓形則能完美分散壓力。" },
+                { question: "搭飛機時，「行李託運」是指行李放在哪裡？", options: ["抱在腿上", "飛機底部的貨艙", "放在廁所"], correctIndex: 1, explanation: "大件行李會在報到時交給地勤，送到飛機肚子底下的巨大貨艙裡存放。" },
+                { question: "台灣哪一條公路被稱為「全台最美景觀公路」？", options: ["台三線", "台 14 甲線（合歡山公路）", "建國高架橋"], correctIndex: 1, explanation: "合歡山公路蜿蜒在海拔三千公尺的壯麗高山與雲海之中，風景美得令人屏息。" },
+                { question: "在海上遇到危險，國際通用的求救信號是？", options: ["LOL", "SOS", "OK"], correctIndex: 1, explanation: "SOS 是摩斯密碼中最容易發送與辨識的信號（三短三長三短），代表著緊急求救。" },
+                { question: "「貓空纜車」在哪個城市？", options: ["高雄", "台北", "南投"], correctIndex: 1, explanation: "貓空纜車位於台北市木柵區，搭乘纜車可以俯瞰台北盆地，抵達山上喝茶看夜景。" },
+                { question: "為什麼在機場不能隨便開「雷射筆」對著天空？", options: ["會浪費電", "會干擾飛行員視線引發危險", "會招來外星人"], correctIndex: 1, explanation: "強烈的雷射光打進駕駛艙會讓飛行員瞬間短暫失明，這是極度危險且違法的行為！" },
+                { question: "「海巡署」的船主要是負責？", options: ["載觀光客", "海域執法、救難與保護漁民", "買魚"], correctIndex: 1, explanation: "海巡艦艇就像海上的警察，負責抓走私偷渡、保護國家海域安全與海上救援。" },
+                { question: "哪種交通工具不用油、不用電，只靠「風」就能跑？", options: ["蒸汽船", "帆船", "潛水艇"], correctIndex: 1, explanation: "帆船利用巨大的布帆捕捉風力，轉換成推動船隻前進的動力，是最環保的航海方式。" },
+                { question: "台灣有一種會唱歌的垃圾車，它放的是什麼音樂？", options: ["國歌", "給愛麗絲 或 少女的祈禱", "搖滾樂"], correctIndex: 1, explanation: "只要聽到這兩首世界名曲的旋律，台灣人就會立刻提著垃圾袋衝出門，這是台灣特有的奇景。" },
+                { question: "「行」的安全最重要，過馬路要遵守的原則是？", options: ["邊走邊玩手機", "停、看、聽", "用跑的比較快"], correctIndex: 1, explanation: "過馬路一定要先停下腳步，看清左右來車，聽聽有沒有車輛靠近的聲音，絕對不能滑手機！" }
+            ],
+// 第六週：育：台灣人的學習 (共100題) 
+        5: [
+            { question: "台灣的小朋友幾歲開始要進入國小接受「義務教育」？", options: ["3 歲", "6 歲", "18 歲"], correctIndex: 1, explanation: "滿 6 歲是心智發展適合進入團體學習的階段，也是台灣法定的義務教育起點。" }, 
+            { question: "現在台灣實施的是幾年國民基本教育？", options: ["6 年", "9 年", "12 年"], correctIndex: 2, explanation: "台灣已從早期的九年國教，正式延伸為涵蓋高中職的「十二年國教」。" }, 
+            { question: "學校裡負責管理全校老師和學生，位階最高的人是？", options: ["班長", "校長", "警衛叔叔"], correctIndex: 1, explanation: "校長是一所學校的行政與教育領袖，帶領全校師生共同努力。" }, 
+            { question: "在學校，如果受傷或肚子痛，要先去哪個地方找護理師？", options: ["圖書館", "健康中心（保健室）", "廚房"], correctIndex: 1, explanation: "健康中心有專業護理師及急救設備，能處理校內發生的突發傷病。" }, 
+            { question: "「國民小學」的一堂課通常是幾分鐘？", options: ["20 分鐘", "40 分鐘", "100 分鐘"], correctIndex: 1, explanation: "國小學生的一堂課定為 40 分鐘，這最符合兒童專注力的生理限度。" }, 
+            { question: "下課鈴聲響起，主要是為了讓學生做什麼？", options: ["趕快回家", "休息、上廁所與活動身體", "繼續寫作業"], correctIndex: 1, explanation: "下課是為了讓眼睛放鬆、起來活動筋骨，並處理生理需求，有助於下一堂課的學習。" }, 
+            { question: "班級裡負責協助老師、帶領同學的人通常稱為？", options: ["班長", "班主任", "班主任助理"], correctIndex: 0, explanation: "班長是同學推選出的幹部領袖，負責管理秩序與協助老師傳達事項。" }, 
+            { question: "在學校，我們稱呼跟我們同年級、同班的同學為？", options: ["學長姊", "同學", "學弟妹"], correctIndex: 1, explanation: "一起在同個環境學習的夥伴統稱為「同學」。" }, 
+            { question: "每年 9 月 28 日是「教師節」，也是哪一位大教育家的生日？", options: ["貝多芬", "孔子", "孫中山"], correctIndex: 1, explanation: "教師節是為了紀念「至聖先師」孔子的誕辰，並感謝老師們的教導。" }, 
+            { question: "「智、育、體、群、美」五育中，「體」是指什麼？", options: ["身體健康與體育運動", "體重增加", "體貼別人"], correctIndex: 0, explanation: "「體」代表體育，培養學生擁有強健的體魄是所有學習的根本。" }, 
+            { question: "升旗典禮時，大家要對著哪一種旗幟敬禮？", options: ["校旗", "國旗", "風箏"], correctIndex: 1, explanation: "升旗儀式中對國旗敬禮，是表達對國家尊重與愛國心的展現。" }, 
+            { question: "台灣學生的「寒假」通常跟哪一個重要的傳統節日在一起？", options: ["中秋節", "農曆新年（春節）", "端午節"], correctIndex: 1, explanation: "寒假通常涵蓋春節，讓學生能與家人團圓慶祝並享受節慶氣氛。" }, 
+            { question: "在教室裡，老師用來寫字讓大家看的板子稱為？", options: ["菜板", "黑板或白板", "沖浪板"], correctIndex: 1, explanation: "老師教學時會利用黑板或白板書寫重點，加強大家的印象。" }, 
+            { question: "哪一種書本是學生上課時必須閱讀的？", options: ["漫畫書", "教科書（課本）", "故事書"], correctIndex: 1, explanation: "教科書是教育部審定的正式教材，包含每學期必須掌握的基礎知識。" }, 
+            { question: "為了保護視力，學校規定下課時應該要做什麼？", options: ["盯著手機看", "望向遠方的綠色植物", "閉眼睛睡覺"], correctIndex: 1, explanation: "眺望遠方能放鬆眼部肌肉的疲勞，是預防近視最簡單有效的方法。" }, 
+            { question: "「營養午餐」最重要的目的是？", options: ["讓小朋友變胖", "提供均衡營養讓身體成長", "練習洗碗"], correctIndex: 1, explanation: "營養午餐由專業營養師配餐，確保成長期的學生攝取充足均衡的營養。" }, 
+            { question: "在學校裡，負責借還書、安靜看書的地方是？", options: ["體育館", "圖書館", "合作社"], correctIndex: 1, explanation: "圖書館提供寧靜的閱讀環境與豐富藏書，是校園內的知識寶庫。" }, 
+            { question: "每學期開始時，要把上學期的書包清空，裝入「新書」的動作叫？", options: ["發書", "買書", "丟書"], correctIndex: 0, explanation: "發放新課本象徵著新學期挑戰的開始，是開學日最重要的活動之一。" }, 
+            { question: "為什麼上課時想發言要先「舉手」？", options: ["為了拉筋", "展現禮貌、等待老師點名", "為了比高"], correctIndex: 1, explanation: "舉手發言是尊重課堂秩序的禮儀，確保大家發言的機會均等。" }, 
+            { question: "學校的「自治市長」通常是誰選出來的？", options: ["老師選的", "全校同學投票選的", "校長指派的"], correctIndex: 1, explanation: "透過全校學生的民主投票選出領袖，能讓學生提早體驗法治社會的精神。" }, 
+            { question: "「聯絡簿」的主要功能是？", options: ["練習寫字", "親師溝通與紀錄作業", "畫畫比賽"], correctIndex: 1, explanation: "聯絡簿是家長掌握孩子在校進度、與老師交流的重要橋樑。" }, 
+            { question: "台灣國小的「暑假」通常在幾月份開始？", options: ["1 月", "7 月", "12 月"], correctIndex: 1, explanation: "台灣暑假通常定在七月，對應氣候最熱的季節，讓師生能長假休整。" }, 
+            { question: "「早自習」通常是在什麼時間進行？", options: ["午休後", "早上第一堂課前", "放學後"], correctIndex: 1, explanation: "早上正式授課前的一段安靜時間，讓學生能收心、準備當天的學習。" }, 
+            { question: "在學校，負責修理燈管、剪草的人通常稱為？", options: ["總務處人員或校工叔叔", "輔導老師", "英語老師"], correctIndex: 0, explanation: "他們負責維護校園的硬體設備與環境整潔，是校園安全的守護者。" }, 
+            { question: "校園裡如果發生霸凌事件，應該先跟誰反映？", options: ["躲起來", "老師或家長", "錄影上傳"], correctIndex: 1, explanation: "遇到霸凌時向大人求助是正確且勇敢的行為，才能有效制止傷害。" }, 
+            { question: "以前沒有電腦遊戲，台灣小朋友最喜歡玩的「轉轉轉」玩具是？", options: ["陀螺", "輪胎", "手機"], correctIndex: 0, explanation: "打陀螺是台灣極具代表性的古早童玩，考驗手部的協調與拋甩力道。" }, 
+            { question: "哪一種童玩是利用橡皮筋彈射，或是用線拉動發出嗡嗡聲？", options: ["扯鈴", "竹蜻蜓", "陀螺"], correctIndex: 1, explanation: "竹蜻蜓藉由搓動木柄或利用橡皮筋彈射旋轉，進而產生升力飛上天。" }, 
+            { question: "在台灣，哪一個地方以「木偶戲（布袋戲）」教學聞名？", options: ["雲林虎尾", "台北西門町", "墾丁大街"], correctIndex: 0, explanation: "雲林虎尾是布袋戲的重要發源地，當地校園對於這項傳統技藝的紮根教育十分重視。" }, 
+            { question: "早期小朋友玩的一種圓形、有圖案的小卡片，可以疊在一起拍，叫什麼？", options: ["悠遊卡", "尪仔標", "名片"], correctIndex: 1, explanation: "尪仔標是早期台灣最流行的社交競賽玩具，上面的圖案反映了當年的時代文化。" }, 
+            { question: "「跳格子」遊戲通常是在哪裡畫格子？", options: ["天花板", "地面上", "課本裡"], correctIndex: 1, explanation: "只要在空地上畫出格子，就能進行這項訓練腳力與平衡感的趣味運動。" }, 
+            { question: "「扯鈴」又被稱為「空竹」，是哪一類教育活動常出現的項目？", options: ["音樂課", "民俗體育", "數學課"], correctIndex: 1, explanation: "扯鈴是一項發展成熟的民俗運動，能鍛鍊全身的敏捷性與協調力。" }, 
+            { question: "哪種童玩需要利用風的力量才能飛得高？", options: ["紙飛機", "風箏", "毽子"], correctIndex: 1, explanation: "風箏利用空氣動力原理在空中盤旋，是許多人童年仰望天空的美好記憶。" }, 
+            { question: "「踢毽子」主要是用身體的哪個部位來操作？", options: ["頭頂", "腳", "嘴巴"], correctIndex: 1, explanation: "踢毽子考驗足部的控制技巧，早期還常會有各種高難度的花式動作。" }, 
+            { question: "「疊羅漢」或「疊杯」可以訓練學生的什麼能力？", options: ["睡覺能力", "手眼協調與平衡感", "唱歌能力"], correctIndex: 1, explanation: "這類運動能有效提升專注力、肢體穩定度以及神經傳導的靈敏度。" }, 
+            { question: "台灣有些學校會教「書法」，那是用什麼筆寫的？", options: ["原子筆", "毛筆", "鉛筆"], correctIndex: 1, explanation: "書法教育引領學生認識漢字的線條美，並在運筆中練習心靈的專注與平靜。" }, 
+            { question: "寫書法時，要將墨條在什麼上面磨出墨汁？", options: ["盤子", "硯台", "碗"], correctIndex: 1, explanation: "硯台與墨、筆、紙合稱文房四寶，是傳統書寫文化的核心器具。" }, 
+            { question: "「圍棋」是由哪兩種顏色的棋子組成的？", options: ["紅與黃", "黑與白", "藍與綠"], correctIndex: 1, explanation: "黑白兩色的圍棋看似簡單，卻包含了博大精深的戰略與運算思維。" }, 
+            { question: "台灣有些小學會練習「舞龍舞獅」，這通常在什麼時候表演？", options: ["考試時", "節慶或校慶時", "睡覺前"], correctIndex: 1, explanation: "舞龍舞獅常用於廟會或重大慶典，能展現節目的熱鬧氣氛與團隊合作。" }, 
+            { question: "「滾鐵圈」是利用一支鐵棒推動鐵圈，訓練什麼？", options: ["視力", "平衡與跑步技巧", "胃口"], correctIndex: 1, explanation: "這項古早童玩需要精確控制手部推力，並配合步伐跟上旋轉的鐵圈。" }, 
+            { question: "哪一種古早童玩是用紙摺成，可以預測運氣或玩遊戲？", options: ["東西南北", "報紙", "衛生紙"], correctIndex: 0, explanation: "摺紙玩具「東西南北」是經典的選擇型遊戲，裡面寫滿了各種趣味角色或指令。" }, 
+            { question: "在草地上玩「捉迷藏」，當鬼的人要先做什麼？", options: ["跑走", "閉眼睛數數", "吃零食"], correctIndex: 1, explanation: "「鬼」閉眼數數是為了提供公平性，讓其他人有足夠的時間躲藏。" }, 
+            { question: "「竹蟬」轉動時會發出聲音，主要是利用什麼原理？", options: ["電池發聲", "摩擦與共振", "藍牙連接"], correctIndex: 1, explanation: "竹蟬透過細線轉動與松香產生的摩擦，在竹管內腔產生共振放大的音效。" }, 
+            { question: "哪種遊戲需要兩個人用手玩「剪刀、石頭、布」？", options: ["猜拳", "跑步", "游泳"], correctIndex: 0, explanation: "猜拳是決定遊戲順序或勝負時，最直接也最公平的工具。" }, 
+            { question: "「老鷹捉小雞」中，排在最前面保護大家的人是？", options: ["老鷹", "母雞", "飼料"], correctIndex: 1, explanation: "母雞需張開雙臂並快速移動，守護身後一整串的小雞不被老鷹觸碰。" }, 
+            { question: "以前的小朋友會玩「抓沙包」，沙包裡面通常裝什麼？", options: ["金幣", "紅豆或綠豆", "水"], correctIndex: 1, explanation: "手工沙包裝滿穀類或豆子，是早期訓練手部敏捷度與節奏感的重要玩具。" }, 
+            { question: "「打彈珠」時，彈珠通常是什麼材質做的？", options: ["巧克力", "玻璃", "紙"], correctIndex: 1, explanation: "晶瑩剔透的彩色玻璃珠是打彈珠遊戲的靈魂，考驗著準確度與策略。" }, 
+            { question: "「跳繩」連續跳 100 下可以訓練哪種身體素質？", options: ["體適能（心肺功能）", "睡意", "體重下降"], correctIndex: 0, explanation: "跳繩能有效強化心肺耐力與肢體協調性。" }, 
+            { question: "在台灣，哪一種藝術教育被稱為「國寶」？", options: ["歌仔戲", "搖滾樂", "芭蕾舞"], correctIndex: 0, explanation: "歌仔戲是台灣本土唯一的傳統戲曲，在文化史與表演藝術上有重要地位。" }, 
+            { question: "「捏麵人」這項傳統手藝，現在常用什麼材料代替麵團？", options: ["黏土", "巧克力", "木頭"], correctIndex: 0, explanation: "現代為了長久保存作品且增加色彩變化，常用彩色輕黏土取代容易腐壞的糯米團。" }, 
+            { question: "「吹泡泡」的液體主要是由什麼混合而成的？", options: ["醬油", "肥皂水或洗潔精", "牛奶"], correctIndex: 1, explanation: "洗潔劑分子降低了水的表面張力，吹入空氣後便能形成薄而堅韌的泡泡壁。" }, 
+            { question: "台灣學生學習注音符號，第一個字母是什麼？", options: ["ㄅ", "ㄆ", "ㄇ"], correctIndex: 0, explanation: "注音符號表的第一個聲母是「ㄅ」，是所有注音學習的起點。" }, 
+            { question: "我們用來寫字的「鉛筆」，筆芯的主要成分是？", options: ["鉛", "石墨", "巧克力"], correctIndex: 1, explanation: "鉛筆芯主要是由石墨與黏土依不同比例混合製作而成，其實完全沒有鉛金屬。" }, 
+            { question: "哪一種顏色通常代表考試「滿分」？", options: ["藍色", "紅色", "綠色"], correctIndex: 1, explanation: "台灣教學現場沿襲傳統，多以紅色的「100」標誌代表優異的學習成果。" }, 
+            { question: "考試前，台灣學生喜歡吃哪種形狀的餅乾，祈求「旺旺」來？", options: ["乖乖", "旺旺仙貝", "巧克力"], correctIndex: 1, explanation: "「旺旺」取其興盛之意，透過吃旺旺仙貝來祈求考場運勢興旺是民間趣談。" }, 
+            { question: "「字典」的主要功能是什麼？", options: ["當枕頭", "查詢國字的讀音和意思", "墊高桌子"], correctIndex: 1, explanation: "字典是自主學習的重要工具，能解答國字的字源、字義與讀音疑問。" }, 
+            { question: "為什麼讀書時光線要充足？", options: ["為了省電", "保護視力不近視", "為了看清影子"], correctIndex: 1, explanation: "光線不足會迫使眼睛睫狀肌過度用力收縮，長期下來很容易造成視力受損。" }, 
+            { question: "在台灣，哪一種語言是我們在學校主要的教學語言？", options: ["法語", "國語（華語）", "德語"], correctIndex: 1, explanation: "國語是台灣公立教育體系中最主要的官方教學與溝通用語。" }, 
+            { question: "「本土語言」課可以學習哪些語言？", options: ["閩南語、客家語、原住民語", "英語", "日語"], correctIndex: 0, explanation: "本土語言課程旨在落實多元文化保存與母語傳承。" }, 
+            { question: "「算盤」是古代用來做什麼的工具？", options: ["樂器", "計算數字", "玩具車"], correctIndex: 1, explanation: "算盤是東方傳統的運算工具，透過撥動珠子來進行進位運算。" }, 
+            { question: "在學校學會「排隊」，是為了培養什麼美德？", options: ["浪費時間", "守秩序與尊重別人", "練習走路"], correctIndex: 1, explanation: "排隊是社會秩序的縮影，能訓練學生尊重他人的時間權利與公德心。" }, 
+            { question: "為什麼老師會要求大家把字寫在「格子」裡？", options: ["怕字跑掉", "練習字的結構美觀與整齊", "格子比較漂亮"], correctIndex: 1, explanation: "格子能作為參考線，幫助初學者掌握漢字筆畫的空間比例與平衡。" }, 
+            { question: "「自然課」主要是學習什麼？", options: ["唱歌", "動物、植物與科學實驗", "練習跑步"], correctIndex: 1, explanation: "自然科學課程引領學生觀察周遭環境與生物，並透過實驗了解世界運行的法則。" }, 
+            { question: "在台灣，小學生幾年級開始要學習「英語」？", options: ["國中", "國小", "大學"], correctIndex: 1, explanation: "為了提升國際競爭力，英語學習已全面下放到國小各階段教育中。" }, 
+            { question: "寫錯字時，最常用的修正工具是？", options: ["橡皮擦", "牙膏", "墨水"], correctIndex: 0, explanation: "橡皮擦利用其彈性分子與摩擦力，將紙上的石墨粉末黏附帶走。" }, 
+            { question: "「圓規」在數學課中是用來畫什麼形狀的？", options: ["正方形", "圓形", "三角形"], correctIndex: 1, explanation: "圓規依據固定圓心、設定半徑旋轉，是幾何學中畫圓的基本製圖工具。" }, 
+            { question: "為什麼要參加「防災演習」？", options: ["為了玩遊戲", "學習在地震或火災時如何保護生命", "為了放假"], correctIndex: 1, explanation: "定期演習能建立緊急應變肌肉記憶，在真實災難發生時才能保持冷靜逃生。" }, 
+            { question: "「愛心媽媽、愛心爸爸」在學校主要是做什麼？", options: ["幫忙教書", "協助導護安全與校園活動的志工", "回去睡覺"], correctIndex: 1, explanation: "他們是校園內最溫暖的志工力量，協助保護學生上下學安全與校內各項活動。" }, 
+            { question: "在台灣，哪一種考試被視為進入大學的重要門檻？", options: ["運動會", "學測或分科測驗", "畫畫比賽"], correctIndex: 1, explanation: "學測是大多數台灣高中生申請進入大學時，最核心的學力評量標準。" }, 
+            { question: "「畢業典禮」的主要意義是？", options: ["慶祝可以不用讀書", "象徵完成學業並進入新階段", "為了領獎金"], correctIndex: 1, explanation: "典禮表彰了學生的學習歷程，是回顧過去與邁向下一個階段的神聖儀式。" }, 
+            { question: "台灣哪一種花被稱為「六月畢業花」？", options: ["梅花", "鳳凰花", "牽牛花"], correctIndex: 1, explanation: "鳳凰花盛開的火紅色調，正好對應六月校園充滿道別與祝福的畢業季。" }, 
+            { question: "「科展」是指什麼樣的展覽？", options: ["科學作品展覽", "考卷展覽", "體育比賽"], correctIndex: 0, explanation: "科展讓學生發揮創意與實證精神，向大眾展示自已的科學專題研究成果。" }, 
+            { question: "學習「程式設計」可以訓練我們的？", options: ["唱歌技巧", "邏輯思考能力", "體力"], correctIndex: 1, explanation: "寫程式能訓練將複雜問題拆解成步驟的能力，有效提升邏輯推理技巧。" }, 
+            { question: "為什麼要有「午休時間」？", options: ["讓老師可以回家", "讓學生休息恢復下午的學習精神", "為了省電燈費"], correctIndex: 1, explanation: "大腦在經過一個早上的學習後會感到疲勞，適度歇息能提升下午的專注力。" }, 
+            { question: "「校訓」通常是學校希望學生具備的？", options: ["漂亮衣服", "品格與精神目標", "錢財"], correctIndex: 1, explanation: "校訓揭示了學校的辦學宗旨，是對於在校生人格特質與品德的核心期許。" }, 
+            { question: "在台灣，哪一所大學是歷史最悠久、規模最大的？", options: ["台灣大學", "哈佛大學", "森林大學"], correctIndex: 0, explanation: "國立台灣大學在學術研究地位與歷史建築背景上，皆具有代表性地位。" }, 
+            { question: "「書包」太重可能會影響學生的什麼發育？", options: ["牙齒", "脊椎與身高", "指甲長度"], correctIndex: 1, explanation: "過重負擔會對發育中的孩童骨骼造成過大壓力，增加脊椎側彎的風險。" }, 
+            { question: "為什麼有些學生考試前要拜「文昌帝君」？", options: ["祈求學業進步、考試順利", "祈求中大獎", "祈求變美"], correctIndex: 0, explanation: "文昌帝君在道教信仰中掌管學問、讀書與功名，是考生心目中的保佑神。" }, 
+            { question: "拜文昌帝君時，常會帶「蔥」是因為諧音？", options: ["衝過去", "聰明", "衝鋒"], correctIndex: 1, explanation: "蔥音近「聰」，這類吉祥意象的諧音文化是傳統信仰中常見的表現。" }, 
+            { question: "拜文昌帝君時，帶「芹菜」代表什麼意思？", options: ["鋼琴很好", "勤勞、勤學", "很親切"], correctIndex: 1, explanation: "芹音近「勤」，象徵求學應保持勤勉不倦的態度，方能獲得好成績。" }, 
+            { question: "為什麼不能在圖書館大聲說話？", options: ["怕書會醒來", "尊重他人讀書的權利與環境寧靜", "怕口渴"], correctIndex: 1, explanation: "保持安靜是圖書館最基本的禮儀。" }, 
+            { question: "「校慶」通常會舉辦什麼活動讓大家參加？", options: ["睡覺比賽", "運動會或園遊會", "考試大賽"], correctIndex: 1, explanation: "校慶活動通常涵蓋動靜態展演，旨在凝聚全校師生情感並展示發展特色。" }, 
+            { question: "學生穿「制服」的好處之一是？", options: ["比較貴", "展現團隊精神並省去煩惱", "比較厚"], correctIndex: 1, explanation: "制服增加了校園的身分辨識度，並能減少學生在服裝裝扮上的相互攀比。" }, 
+            { question: "「模範生」通常是指在哪方面表現優異的同學？", options: ["只有跑步", "品德與學習各方面都很優秀", "只有家裡有錢"], correctIndex: 1, explanation: "模範生應具備德育與智育的全面發展，作為全校師生學習的良好榜樣。" }, 
+            { question: "在走廊上看到老師，應該怎麼做比較有禮貌？", options: ["假裝沒看到", "點頭或開口問好", "趕快跑掉"], correctIndex: 1, explanation: "主動向長輩或師長問好，是展現良好教養與尊師重道的具體行為。" }, 
+            { question: "「獎狀」是對學生什麼的肯定？", options: ["身體重量", "努力與優異表現", "運氣好"], correctIndex: 1, explanation: "獎狀是一種榮譽性的肯定，能激勵學生在特定領域持續追求卓越進步。" }, 
+            { question: "為什麼有些學校規定不能帶「手機」去教室？", options: ["怕手機會沒電", "避免影響學習專注度", "怕被老師偷看"], correctIndex: 1, explanation: "管制通訊設備能減少課堂中的多餘干擾，維護每位學生獲取知識的品質。" }, 
+            { question: "在台灣，哪一個地方有「孔廟」，每年都會舉行祭孔大典？", options: ["只有台北", "台南、台北、台中等都有", "只有月球"], correctIndex: 1, explanation: "各地孔廟反映了崇尚儒家尊師文化的傳統，祭孔典禮更是年度文化盛事。" }, 
+            { question: "「家庭聯絡簿」為什麼要請家長簽名？", options: ["練習簽名", "確保家長知道學生在校狀況", "為了好玩"], correctIndex: 1, explanation: "家長簽署代表已掌握學校的重要訊息，能共同監督學生的課業進度。" }, 
+            { question: "為什麼要定期參加「視力檢查」？", options: ["為了戴眼鏡漂亮", "提早發現近視並進行追蹤治療", "為了看電視"], correctIndex: 1, explanation: "定期篩檢能掌握視力變動趨勢，在近視初期及時採取矯治措施。" }, 
+            { question: "「校園霸凌」是指什麼行為？", options: ["一起玩遊戲", "長期欺負、排擠或傷害別人的行為", "分享零食"], correctIndex: 1, explanation: "霸凌具備長期、惡意與權力不對等的特徵，是校園必須防制的偏差行為。" }, 
+            { question: "遇到火災逃生時，為什麼要「壓低身體」？", options: ["為了找東西", "下方才有新鮮空氣且避開濃煙", "為了躲貓貓"], correctIndex: 1, explanation: "濃煙因熱對流往上方竄升，貼近地面的空氣含氧量較高且能見度較好。" }, 
+            { question: "「志工」是指什麼樣的人？", options: ["領很多錢的人", "出於自願服務大眾的人", "拿工資的人"], correctIndex: 1, explanation: "志工秉持無私精神奉獻時間與專業服務社會，是公共領域的重要推手。" }, 
+            { question: "「合作社」在以前的學校主要是做什麼的地方？", options: ["睡覺", "販售文具、零食或早餐的地方", "打架"], correctIndex: 1, explanation: "合作社服務師生的校內日常消費需求，是許多人下課時光的重要回憶。" }, 
+            { question: "為什麼老師會教大家「飯後漱口」？", options: ["為了口渴", "清潔牙縫殘渣、預防蛀牙", "為了唱歌好聽"], correctIndex: 1, explanation: "漱口或刷牙能及時清除殘留醣類，減緩口內細菌滋生，預防牙齒病變。" }, 
+            { question: "「大掃除」通常是為了？", options: ["弄髒校園", "營造乾淨舒適的學習環境", "為了累死學生"], correctIndex: 1, explanation: "維護公共空間整潔是團體成員共同的責任，也有助於維持個人身心健康。" }, 
+            { question: "在台灣，學生的「制服」上常會繡有什麼數字？", options: ["電話號碼", "學號", "生日"], correctIndex: 1, explanation: "學號是每位學生的校內唯一辨識碼，方便校方行政與身分管理。" }, 
+            { question: "「班級圖書角」是為了讓大家？", options: ["拿書來墊桌子", "隨時可以閱讀有趣的圖書", "躲在後面睡覺"], correctIndex: 1, explanation: "設置閱讀角能縮短學生與圖書的距離，鼓勵大家在零碎時間也能享受閱讀趣。" }, 
+            { question: "「童軍」教育主要是學習什麼精神？", options: ["買東西", "露營技巧與服務他人", "睡大覺"], correctIndex: 1, explanation: "童軍運動強調「準備」、「日行一善」以及團隊互助合作的核心價值觀。" }, 
+            { question: "在校園裡撿到錢，應該交給？", options: ["放在口袋", "學務處或老師", "去買糖果"], correctIndex: 1, explanation: "拾金不昧是建立誠實品格的基本守則，交給公眾單位能增加失物找回的機會。" }, 
+            { question: "教育最大的目的是希望小朋友未來成為？", options: ["只會考試的機器", "懂禮貌且對社會有貢獻的人", "懶惰鬼"], correctIndex: 1, explanation: "學校教育終極目標在於培育具備全方位素養、良好品德與社會關懷的公民。" } 
+        ],
 
-function setLoading(show,text='處理中...'){
-  document.getElementById('loadingOverlay').classList.toggle('show',show);
-  document.getElementById('loadingText').textContent=text;
-}
+// ===== 第七週：樂：台灣休閒(1) =====
+        6: [
+            { question: "2024 年夏季奧運在哪個城市舉行，台灣選手也去參加了？", options: ["東京", "巴黎", "紐約"], correctIndex: 1, explanation: "2024 夏季奧運在法國巴黎舉辦。" },
+            { question: "在 2024 巴黎奧運中，台灣的「拳擊女王」是誰？", options: ["林郁婷", "戴資穎", "郭婞淳"], correctIndex: 0, explanation: "林郁婷克服壓力，在巴黎奧運為台灣奪下拳擊金牌。" },
+            { question: "台北大巨蛋（Taipei Dome）除了打棒球，還可以用來做什麼？", options: ["舉辦演唱會", "蓋游泳池", "當農場"], correctIndex: 0, explanation: "大巨蛋是一個多功能室內場館，也可舉辦大型演唱會。" },
+            { question: "台灣目前最紅的 AI 公司執行長黃仁勳，他回台灣最喜歡逛哪裡？", options: ["圖書館", "夜市", "遊樂園"], correctIndex: 1, explanation: "黃仁勳熱愛充滿台灣人情味與美食的夜市。" },
+            { question: "現在國小生很流行的「盲盒」抽獎，裡面裝的小公仔通常叫？", options: ["乖乖", "潮玩/泡泡瑪特", "彈珠"], correctIndex: 1, explanation: "盲盒因未知的驚喜感而大受歡迎。" },
+            { question: "台灣哪位羽球男雙組合蟬聯兩屆奧運金牌，被稱為「麟洋配」？", options: ["王齊麟與李洋", "周天成與林丹", "林昀儒與王楚欽"], correctIndex: 0, explanation: "王齊麟和李洋連續兩屆奧運奪金，創下歷史紀錄。" },
+            { question: "2025 年即將在台北與新北舉辦的盛大運動賽事是？", options: ["亞運", "世界壯年運動會", "世界盃足球賽"], correctIndex: 1, explanation: "這是一場結合運動與觀光的國際大型賽事。" },
+            { question: "台灣目前最受歡迎的女子職籃或職棒「應援文化」是指什麼？", options: ["啦啦隊表演", "煮飯比賽", "整理場地"], correctIndex: 0, explanation: "充滿活力的啦啦隊已成為台灣職業運動的獨特亮點。" },
+            { question: "現在小朋友喜歡玩的「Switch」遊戲中，哪一個可以邊運動邊冒險？", options: ["健身環大冒險", "貪食蛇", "俄羅斯方塊"], correctIndex: 0, explanation: "讓玩家可以一邊通關一邊鍛鍊身體。" },
+            { question: "台灣哪一位鋼琴家或創作者在 YouTube 上以「音樂與趣味」聞名？", options: ["Pan Piano", "泛舟哥", "江老師"], correctIndex: 2, explanation: "江老師以幽默風趣的方式介紹音樂，深受喜愛。" },
+            { question: "目前台灣最紅的「數位寵物」或收集卡牌遊戲是什麼？", options: ["寶可夢 (Pokémon)", "尪仔標", "紙飛機"], correctIndex: 0, explanation: "寶可夢至今依然風靡大小朋友。" },
+            { question: "在 2024 年，哪一首台灣歌曲在網路上因為洗腦旋律爆紅？", options: ["晚安大小姐", "望春風", "國歌"], correctIndex: 0, explanation: "洗腦的旋律在社群平台上引起了模仿熱潮。" },
+            { question: "台灣的「誠品書店」現在除了賣書，還有什麼休閒功能？", options: ["賣文創產品與美食", "當體育館", "幫人修理電腦"], correctIndex: 0, explanation: "轉型為複合式商場，結合了閱讀與餐飲。" },
+            { question: "「Threads」（脆）是目前台灣年輕人很流行的什麼平台？", options: ["煮飯平台", "社交文字分享平台", "跑步軟體"], correctIndex: 1, explanation: "以純文字分享為主的社群平台，在年輕世代非常受歡迎。" },
+            { question: "為什麼現在流行「露營車」旅遊？", options: ["比較快", "結合住宿與交通，可以睡在風景裡", "為了省油"], correctIndex: 1, explanation: "露營車讓人可以輕鬆享受大自然。" },
+            { question: "台灣哪一場馬拉松賽事，選手可以邊跑邊吃牛排、龍蝦？", options: ["台北馬拉松", "田中馬拉松", "紐約馬拉松"], correctIndex: 1, explanation: "彰化的田中馬拉松以超豐盛的沿途補給聞名。" },
+            { question: "現在流行的「沉浸式展覽」是指什麼？", options: ["泡在水裡看", "利用投影技術讓人像走進畫裡", "閉眼睛聽"], correctIndex: 1, explanation: "透過大型光影讓觀眾彷彿走入藝術品中。" },
+            { question: "台灣哪位桌球小將被稱為「沉默殺手」，球技超驚人？", options: ["林昀儒", "莊智淵", "江宏傑"], correctIndex: 0, explanation: "林昀儒個性安靜，但一上場就展現出驚人球技。" },
+            { question: "現在很多小朋友會去「彈跳床樂園」，這主要是訓練什麼？", options: ["寫字", "核心肌群與平衡感", "肺活量"], correctIndex: 1, explanation: "跳躍可以有效鍛鍊身體的協調性與平衡感。" },
+            { question: "台灣的「金曲獎」是為了獎勵哪一方面的傑出人才？", options: ["電影", "音樂", "運動"], correctIndex: 1, explanation: "金曲獎是華語流行音樂圈最高榮譽。" },
+            { question: "「周杰倫」將在 2024 年底成為第一位在大巨蛋開個演的歌手嗎？", options: ["是", "不是", "他不唱了"], correctIndex: 0, explanation: "他將成為首位在台北大巨蛋舉辦個唱的歌手。" },
+            { question: "台灣目前流行的「Podcast」是什麼樣的娛樂？", options: ["數位廣播（只用聽的）", "紙本漫畫", "體育比賽"], correctIndex: 0, explanation: "可以隨時收聽各種主題的聲音節目。" },
+            { question: "為什麼現在流行「攀岩場」？", options: ["為了躲避敵人", "全民健身與挑戰自我", "為了變高"], correctIndex: 1, explanation: "室內攀岩是一項結合體力與智力的全身運動。" },
+            { question: "台灣哪一個棒球場在 2024 年吸引超多觀眾，因為冷氣很涼？", options: ["台北大巨蛋", "澄清湖球場", "天母球場"], correctIndex: 0, explanation: "大巨蛋讓球迷可以舒服吹冷氣看比賽。" },
+            { question: "現在小朋友常用的「貼圖」是哪一個通訊軟體的特色？", options: ["LINE", "電報", "傳真"], correctIndex: 0, explanation: "LINE 貼圖已成為日常聊天表達情緒的工具。" },
+            { question: "台灣被稱為「什麼之島」，因為島上有超過 400 種蝴蝶？", options: ["蝴蝶王國", "螞蟻島", "蚊子島"], correctIndex: 0, explanation: "台灣氣候孕育了種類繁多的蝴蝶生態。" },
+            { question: "想要去賞鯨、看海豚，應該去台灣哪一邊的海域？", options: ["西岸 (彰化)", "東岸 (花蓮、宜蘭)", "地下室"], correctIndex: 1, explanation: "東部太平洋海域是許多鯨豚洄游的路線。" },
+            { question: "台灣哪種保育類動物長得像黑熊，胸前有白色 V 字？", options: ["北極熊", "台灣黑熊", "無尾熊"], correctIndex: 1, explanation: "胸前的 V 字型白斑是台灣黑熊的正字標記。" },
+            { question: "「合歡山」在冬天最受歡迎的活動是什麼？", options: ["賞雪", "採芒果", "游泳"], correctIndex: 0, explanation: "合歡山是台灣冬季最熱門的賞雪勝地。" },
+            { question: "台灣哪裡可以看「螢火蟲」？通常在什麼季節？", options: ["冬天", "春末夏初（4-5月）", "每天都有"], correctIndex: 1, explanation: "每年的 4 到 5 月，是台灣觀賞螢火蟲生態的最佳時機。" },
+            { question: "去「陽明山」除了看花，還可以看到什麼地熱景觀？", options: ["噴火龍", "小油坑（噴煙的硫氣孔）", "冰山"], correctIndex: 1, explanation: "小油坑終年噴發著高溫的硫磺氣體，非常壯觀。" },
+            { question: "台灣哪一種樹被稱為「國寶樹」，長得非常慢且很香？", options: ["椰子樹", "台灣檜木", "聖誕樹"], correctIndex: 1, explanation: "台灣檜木散發濃郁天然香氣，是非常珍貴的植物。" },
+            { question: "在「墾丁」浮潛時，看到五顏六色的海底森林是什麼？", options: ["塑膠袋", "珊瑚礁", "麵條"], correctIndex: 1, explanation: "墾丁海域擁有豐富美麗的珊瑚礁生態系。" },
+            { question: "台灣哪裡的「黑面琵鷺」冬天會來過冬？", options: ["台南七股", "台北 101", "玉山頂"], correctIndex: 0, explanation: "台南七股的溼地每年冬天都會吸引黑面琵鷺避寒。" },
+            { question: "「溪頭」森林遊樂區最有名的步道是？", options: ["空中走廊", "水上溜滑梯", "捷運軌道"], correctIndex: 0, explanation: "空中走廊能讓遊客近距離觀察高空樹冠層生態。" },
+            { question: "去「拉拉山」除了避暑，大家最想吃哪種甜甜的水果？", options: ["西瓜", "水蜜桃", "榴槤"], correctIndex: 1, explanation: "桃園拉拉山盛產飽滿多汁又香甜的水蜜桃。" },
+            { question: "台灣哪一個湖泊長得像月亮也像太陽，是著名景點？", options: ["澄清湖", "日月潭", "鯉魚潭"], correctIndex: 1, explanation: "日月潭是台灣最大的半天然淡水湖泊。" },
+            { question: "想要看到漂亮的「雲海」，通常要爬到什麼樣的地方？", options: ["高山", "地下室", "海邊"], correctIndex: 0, explanation: "高山地區常能欣賞到壯麗的雲海翻騰景觀。" },
+            { question: "台灣的「野柳地質公園」有一顆像女王頭的石頭叫？", options: ["國王頭", "女王頭", "公主頭"], correctIndex: 1, explanation: "因風化與海蝕形成的女王頭是野柳的代表地標。" },
+            { question: "在台灣，「觀星」最棒的地方通常要在？", options: ["市中心", "沒有光害的高山", "百貨公司"], correctIndex: 1, explanation: "高山空氣稀薄且沒有城市光害，是觀星最佳地點。" },
+            { question: "「龜山島」在宜蘭外海，它長得像什麼動物？", options: ["兔子", "烏龜", "龍"], correctIndex: 1, explanation: "形狀就像是一隻浮在海面上的巨大海龜。" },
+            { question: "台灣哪一種鳥類被選為「國鳥」，羽毛是寶藍色的？", options: ["麻雀", "台灣藍鵲", "鴿子"], correctIndex: 1, explanation: "台灣藍鵲擁有華麗的寶藍色羽毛，非常美麗。" },
+            { question: "去「雪霸國家公園」可以看到哪種稀有的魚？", options: ["鯊魚", "櫻花鉤吻鮭", "金魚"], correctIndex: 1, explanation: "櫻花鉤吻鮭是被譽為台灣國寶魚的珍稀活化石。" },
+            { question: "台灣的「泥漿溫泉」在哪裡？全台唯一喔！", options: ["關子嶺", "北投", "礁溪"], correctIndex: 0, explanation: "台南關子嶺擁有全台唯一的泥漿溫泉。" },
+            { question: "賞楓紅（楓葉變紅）的最佳季節通常是在？", options: ["夏天", "秋末冬初", "春天"], correctIndex: 1, explanation: "氣溫漸低時，高山的楓葉就會轉為美麗的紅黃色。" },
+            { question: "台灣哪一個離島可以看到「梅花鹿」跑來跑去？", options: ["綠島", "澎湖", "馬祖大坵島"], correctIndex: 2, explanation: "馬祖大坵島上有許多野生放養的梅花鹿。" },
+            { question: "「太魯閣國家公園」最出名的自然壯觀景色是什麼？", options: ["沙漠", "大理岩峽谷", "瀑布牆"], correctIndex: 1, explanation: "立霧溪切割形成的大理石峽谷是世界級自然奇觀。" },
+            { question: "在台灣，哪一種動物叫聲很大，夏天常在樹上叫？", options: ["蟬", "螞蟻", "蝴蝶"], correctIndex: 0, explanation: "蟬鳴是台灣夏天最經典的背景聲音。" },
+            { question: "為什麼不能在國家公園內隨便餵食野生猴子？", options: ["怕猴子變胖", "避免猴子搶食並維持自然生態", "猴子不愛吃"], correctIndex: 1, explanation: "餵食會改變覓食習性，甚至造成猴子主動攻擊遊客。" },
+            { question: "「休閒農業區」可以讓小朋友體驗什麼樂趣？", options: ["打電動", "採果與認識農村生活", "賽車"], correctIndex: 1, explanation: "讓都市人也能體驗採摘水果的農家樂趣。" }
+        ],
+// ===== 第八週：樂：台灣休閒(2) =====
+        7: [
+            { question: "台灣研發的「返校」是一款什麼樣的娛樂作品？", options: ["遊戲與電影", "只有食譜", "體育運動"], correctIndex: 0, explanation: "最初是恐怖解謎遊戲，後來大受歡迎並改編成了電影。" },
+            { question: "現在流行的「VR」眼鏡，戴上去可以體驗什麼？", options: ["睡覺", "虛擬實境（感覺走進不同世界）", "放大鏡"], correctIndex: 1, explanation: "虛擬實境技術讓人有身歷其境的沉浸感。" },
+            { question: "台灣哪一個地方有很多「電玩中心（湯姆熊）」，大家喜歡去玩賽車？", options: ["圖書館", "百貨公司或購物中心", "警察局"], correctIndex: 1, explanation: "百貨公司常附設適合全家大小的室內遊樂場。" },
+            { question: "小朋友最喜歡玩的「Roblox」是一款什麼樣的軟體？", options: ["煮飯教學", "遊戲創作平台", "畫畫工具"], correctIndex: 1, explanation: "讓玩家可以自己設計遊戲並與全世界分享的平台。" },
+            { question: "「無人機表演」通常在節慶時用來代替什麼？", options: ["煮飯", "煙火", "廣播"], correctIndex: 1, explanation: "無人機群飛環保且視覺震撼，常取代傳統煙火。" },
+            { question: "台灣的「誠品 24 小時書店」現在在哪一間？", options: ["信義店 (已結束)", "松菸店", "南西店"], correctIndex: 1, explanation: "誠品生活松菸店接棒成為新的 24 小時不打烊書店。" },
+            { question: "想要租借電影在家看，現在流行用什麼平台？", options: ["Netflix 或 Disney+", "租帶子店", "錄影機"], correctIndex: 0, explanation: "大家現在多使用串流影音平台觀看電影與影集。" },
+            { question: "「數位修復」電影是什麼意思？", options: ["把電影變短", "用科技把舊電影變清晰", "重新拍一遍"], correctIndex: 1, explanation: "利用科技修補底片，讓經典老片恢復清晰。" },
+            { question: "台灣人喜歡用「街口支付」或「LINE Pay」付款，這叫？", options: ["行動支付", "換錢比賽", "刷卡遊戲"], correctIndex: 0, explanation: "用手機掃描條碼就能付款的科技就是行動支付。" },
+            { question: "現在流行的「AR」擴增實境遊戲，最出名的是哪一個？", options: ["寶可夢 GO", "俄羅斯方塊", "踩地雷"], correctIndex: 0, explanation: "將虛擬的寶可夢與現實街道結合，掀起抓寶熱潮。" },
+            { question: "在網路上「直播」的人，通常被稱為什麼？", options: ["直播主或實況主", "播報員", "打字員"], correctIndex: 0, explanation: "透過網路轉播自己玩遊戲或聊天的過程與觀眾互動。" },
+            { question: "「電競比賽」通常是在比什麼？", options: ["比賽誰睡得久", "電子遊戲競技", "比賽打字快慢"], correctIndex: 1, explanation: "將電子遊戲提升到比賽層級，考驗技術與團隊合作。" },
+            { question: "台灣哪一家半導體公司被稱為「護國神山」，讓我們有很多科技娛樂？", options: ["台積電", "統一超商", "乖乖公司"], correctIndex: 0, explanation: "台積電製造的高階晶片是現代科技產品的核心零件。" },
+            { question: "為什麼現在看電影可以選「4DX」？", options: ["票價比較便宜", "椅子會動、有風有水增加臨場感", "螢幕是黑白的"], correctIndex: 1, explanation: "配備動態座椅與環境特效，讓觀眾身歷其境。" },
+            { question: "「雲端遊戲」的意思是什麼？", options: ["在飛機上玩", "透過網路直接玩，不用下載大型檔案", "畫雲的遊戲"], correctIndex: 1, explanation: "只要有網路就能透過螢幕遊玩，不需安裝龐大檔案。" },
+            { question: "「智慧型手錶」可以記錄什麼休閒數據？", options: ["你的考卷分數", "運動步數與心跳", "冰箱的溫度"], correctIndex: 1, explanation: "內建多種感測器能追蹤日常活動量與健康數據。" },
+            { question: "台灣哪一個科學園區是科技娛樂產品的重要出生地？", options: ["新竹科學園區", "動物園", "老街"], correctIndex: 0, explanation: "被譽為台灣的矽谷，是許多高科技產品的研發重鎮。" },
+            { question: "現在流行「線上課程」，小朋友在家裡可以用什麼學習？", options: ["電腦或平板", "收音機", "紙飛機"], correctIndex: 0, explanation: "透過網路隨時隨地遠距教學，學習變得更方便。" },
+            { question: "「AI 繪圖」是指？", options: ["人工智慧幫你畫畫", "小朋友自己畫畫", "畫在牆壁上"], correctIndex: 0, explanation: "只要輸入指令，人工智慧就能自動生成美麗的圖片。" },
+            { question: "台灣的「多媒體藝術」展覽常在哪裡舉辦？", options: ["美術館", "海邊", "樹林"], correctIndex: 0, explanation: "美術館常會引進結合光影與互動科技的多媒體展覽。" },
+            { question: "「智慧教室」裡常用來互動的螢幕叫什麼？", options: ["觸控式大螢幕", "電視機", "鏡子"], correctIndex: 0, explanation: "可以讓老師和學生直接在螢幕上書寫與互動。" },
+            { question: "現在流行在 YouTube 看「開箱影片」，那是看什麼？", options: ["拆開新產品並介紹內容", "整理垃圾桶", "修理箱子"], correctIndex: 0, explanation: "拍攝拆開新產品的過程並實際測試評價。" },
+            { question: "「數位音樂」通常是在哪裡聽？", options: ["CD 機", "Spotify 或 KKBOX 等串流平台", "留聲機"], correctIndex: 1, explanation: "付月費就能在手機上聽遍全世界數百萬首歌曲。" },
+            { question: "為什麼網路遊戲要有「家長監護功能」？", options: ["怕電腦壞掉", "控制遊戲時間與內容安全", "讓老師可以玩"], correctIndex: 1, explanation: "避免未成年人沉迷遊戲或接觸到不當內容。" },
+            { question: "台灣哪一個地方有「體感飛行劇院（i-Ride）」，像在飛一樣？", options: ["台北與高雄", "只有玉山", "只有墾丁"], correctIndex: 0, explanation: "利用懸空座椅與巨大球幕，讓人有翱翔天際的刺激感。" },
+            { question: "台灣人喜歡「集郵」或是「收集紀念章」，紀念章通常在哪？", options: ["火車站或風景區", "廁所", "冰箱裡"], correctIndex: 0, explanation: "各大車站與風景區通常會準備特色紀念章讓遊客留念。" },
+            { question: "「園遊會」上最常出現的攤位活動是？", options: ["考英文", "套圈圈或撈金魚", "睡覺"], correctIndex: 1, explanation: "常會重現夜市裡的經典小遊戲，好玩又有獎品。" },
+            { question: "去「電影院」看電影，開演前要先看什麼？", options: ["逃生宣導片", "老師照片", "國歌"], correctIndex: 0, explanation: "播放逃生路線宣導片，遇到緊急狀況才知道怎麼逃生。" },
+            { question: "台灣有一種休閒叫「跑咖」，是指去哪裡？", options: ["跑操場", "去不同的咖啡廳拍照喝咖啡", "去抓咖哩"], correctIndex: 1, explanation: "到處探訪特色咖啡廳，享受氣氛並拍照打卡。" },
+            { question: "「文青」是指喜歡哪種活動的人？", options: ["喜歡文學與藝術活動", "喜歡打架", "喜歡睡覺"], correctIndex: 0, explanation: "通常喜歡逛美術館、看展覽、閱讀書籍，充滿文藝氣息。" },
+            { question: "台灣哪一個節慶會送「康乃馨」？", options: ["教師節", "母親節", "聖誕節"], correctIndex: 1, explanation: "母親節大家都會送康乃馨感謝媽媽的辛勞。" },
+            { question: "為什麼在室內不能玩「滑板」？", options: ["會磨壞地板且撞到人", "滑板會感冒", "輪子會發光"], correctIndex: 0, explanation: "非常容易撞傷別人或損壞家具，應該在戶外玩。" },
+            { question: "「跳蚤市場」是賣什麼的地方？", options: ["賣跳蚤", "賣二手舊貨", "賣新車"], correctIndex: 1, explanation: "將家中不需要但還能用的物品拿出來便宜賣，非常環保。" },
+            { question: "台灣人喜歡「慶生」，生日蛋糕上通常插什麼？", options: ["筷子", "歲數蠟燭", "湯匙"], correctIndex: 1, explanation: "點燃代表歲數的蠟燭許願並吹熄，是經典的慶生儀式。" },
+            { question: "「抓周」是台灣小朋友幾歲時的樂趣與習俗？", options: ["1 歲", "10 歲", "20 歲"], correctIndex: 0, explanation: "寶寶滿一歲時讓他們抓取物品，用來預測未來的志向。" },
+            { question: "去「遊樂園」排隊時，應該遵守什麼禮儀？", options: ["隨便插隊", "耐心排隊不推擠", "大聲尖叫"], correctIndex: 1, explanation: "不插隊、不推擠才能讓大家都有一個愉快安全的體驗。" },
+            { question: "台灣哪裡的「老街」可以吃到彩色芋圓並看風景？", options: ["九份", "101 頂樓", "成功高中"], correctIndex: 0, explanation: "九份老街以獨特的山城風景與Q彈的手工芋圓聞名。" },
+            { question: "「草地音樂會」通常是讓大家怎麼聽音樂？", options: ["坐在草地上邊吃邊聽", "倒立聽", "躲在樹後聽"], correctIndex: 0, explanation: "坐在舒適的草皮上享受現場音樂表演，非常放鬆。" },
+            { question: "為什麼不能在「博物館」內摸展覽品？", options: ["展覽品會咬人", "怕弄壞或弄髒珍貴文物", "怕展覽品會痛"], correctIndex: 1, explanation: "手上的汗水會損害古董藝術品，必須用眼睛看不能動手摸。" },
+            { question: "台灣人說「哈日、哈韓」是指喜歡哪裡的文化？", options: ["日本、韓國", "太陽、月亮", "哈利波特"], correctIndex: 0, explanation: "哈就是非常熱愛日本與韓國的流行文化與娛樂。" },
+            { question: "「角色扮演」又被稱為什麼縮寫？", options: ["RPG", "Cosplay", "KFC"], correctIndex: 1, explanation: "指愛好者穿上特製服裝，打扮成動漫、遊戲中角色的活動。" },
+            { question: "去「夜市」玩遊戲贏得的贈品通常是什麼？", options: ["金條", "絨毛娃娃或小玩具", "考卷"], correctIndex: 1, explanation: "玩夜市小遊戲過關後，老闆通常會送可愛娃娃當獎勵。" },
+            { question: "「攀樹」是一種結合運動與什麼的娛樂？", options: ["睡覺", "觀察樹木生態", "砍樹"], correctIndex: 1, explanation: "可以安全地爬上樹冠層，近距離觀察樹木與生態。" },
+            { question: "台灣哪一個地方有「巧克力雲莊」，可以體驗做巧克力？", options: ["苗栗", "台北", "高雄"], correctIndex: 0, explanation: "苗栗大湖的巧克力雲莊可以親手製作屬於自己的巧克力。" },
+            { question: "「漆彈比賽」主要是玩什麼性質的娛樂？", options: ["畫畫", "模擬生存射擊與團體合作", "吃彈珠"], correctIndex: 1, explanation: "在模擬戰場中進行射擊對抗，考驗反應與戰術默契。" },
+            { question: "去「動物園」看企鵝時，為什麼不能開閃光燈？", options: ["企鵝會變黑", "閃光燈會嚇到企鵝的眼睛", "為了省電"], correctIndex: 1, explanation: "動物眼睛對強光敏感，閃光燈會造成極大驚嚇甚至傷害視力。" },
+            { question: "台灣人喜歡「集點」是因為？", options: ["為了換到喜歡的贈品", "為了寫字", "為了變重"], correctIndex: 0, explanation: "集滿點數就能兌換可愛的聯名商品或享受折扣。" },
+            { question: "「生活智慧王」是指很會利用什麼的人？", options: ["很會利用創意解決生活問題", "很會打電動", "很會睡覺"], correctIndex: 0, explanation: "分享用日常小巧思、小妙招來解決家事與生活難題。" },
+            { question: "台灣哪裡的「糖廠」現在變成可以吃冰和坐小火車的樂園？", options: ["橋頭或溪湖糖廠", "只有 101", "只有海邊"], correctIndex: 0, explanation: "許多百年糖廠轉型為觀光糖廠，最受歡迎的就是吃冰和搭五分車。" },
+            { question: "「快樂學習，健康長大」是誰對小朋友的期望？", options: ["家長與老師", "只有鄰居", "只有警察叔叔"], correctIndex: 0, explanation: "這是所有家長與老師，對每一位小朋友最真摯的祝福！" }
+        ],
+        };
 
-// P1 → P2
-function goP2(){
-  const t=document.getElementById('teacherSel').value;
-  if(!t){alert('請選擇老師');return;}
-  curTeacher=t;
-  if(isLevelTest && ltCls){
-    // 升級考模式：直接跳到學生評語頁
-    selectCls(ltCls, ltBook);
-  } else {
-    renderClsList();
-    show(2);
-  }
-}
+        // 機會/命運 卡片池 (恢復分數顯示，純屬趣味事件，不進行最後加總)
+        const initialCardsPool = [
+            { text: "扶老奶奶過馬路，被稱讚了！", score: 15 },
+            { text: "幫忙做家事，獲得零用錢！", score: 10 },
+            { text: "段考考了100分！", score: 20 },
+            { text: "在路上撿到10塊錢交給警察！", score: 5 },
+            { text: "參加台灣黑熊保育活動！", score: 15 },
+            { text: "買飲料幸運抽中買一送一！", score: 10 },
+            { text: "發票中了兩百塊！", score: 10 },
+            { text: "忘記帶悠遊卡，只好走路回家...", score: -5 },
+            { text: "喝珍奶時珍珠掉到衣服上...", score: -5 },
+            { text: "上課偷吃零食被老師發現...", score: -10 },
+            { text: "遇到颱風天停電，不能打電動了。", score: -5 },
+            { text: "去猴硐玩被貓咪無視了...", score: -5 },
+            { text: "搭捷運忘記戴口罩被提醒。", score: -5 },
+            { text: "逛夜市吃太飽，肚子痛...", score: -10 }
+        ];
 
-function renderClsList(){
-  const list=document.getElementById('clsList');
-  list.innerHTML='';
-  (TEACHER_CLASSES[curTeacher]||[]).forEach(([cls,book])=>{
-    const btn=document.createElement('button');
-    btn.className='cls-btn'+(doneCls.has(cls)?' done':'');
-    const statusText=doneCls.has(cls)?'<div class="cls-status" style="color:#30d158">✓ 已送出</div>':'';
-    btn.innerHTML=`<div><div class="cls-name">${cls}</div><div class="cls-book">${book}</div>${statusText}</div><span class="cls-arrow">›</span>`;
-    btn.onclick=()=>selectCls(cls,book);
-    list.appendChild(btn);
-  });
-}
+        // ==========================================
+        // 2. 遊戲狀態與邏輯區
+        // ==========================================
+        let currentWeekId = null;
+        let currentQuestionList = [];
+        let currentQuestionIndex = 0;
+        let availableCards = []; // 目前剩下的卡片
 
-// 用 JSONP 讀草稿（能繞過 CORS）
-function fetchJsonp(url){
-  return new Promise((resolve,reject)=>{
-    const cb='_cb'+Date.now();
-    window[cb]=data=>{delete window[cb];document.head.removeChild(s);resolve(data);};
-    const s=document.createElement('script');
-    s.src=url+'&callback='+cb;
-    s.onerror=()=>{delete window[cb];document.head.removeChild(s);reject(new Error('JSONP failed'));};
-    document.head.appendChild(s);
-    setTimeout(()=>{if(window[cb]){delete window[cb];try{document.head.removeChild(s);}catch(e){}reject(new Error('JSONP timeout'));}},8000);
-  });
-}
+        // 初始化
+        window.onload = () => {
+            renderCategories();
+        };
 
-// 選班級：讀草稿，判斷是否升級考
-async function selectCls(cls,book){
-  curCls=cls; curBook=book; comments={};ltData={};currentStu=0;
-  isLevelTest=false; ltScoreData={};
-  goals=[''];  // 先設預設，讀到草稿後覆蓋
+        // 畫面切換控制
+        function showScreen(screenId) {
+            const screens = ['screen-home', 'screen-select', 'screen-game', 'screen-end'];
+            screens.forEach(id => document.getElementById(id).classList.add('hidden-screen'));
+            document.getElementById(screenId).classList.remove('hidden-screen');
 
-  setLoading(true,'讀取草稿中...');
-  try{
-    const month=document.getElementById('monthVal').value;
-    const url=SCRIPT_URL+'?action=get_draft'
-      +'&teacher='+encodeURIComponent(curTeacher)
-      +'&cls='+encodeURIComponent(cls)
-      +'&month='+encodeURIComponent(month);
-    const data=await fetchJsonp(url);
-    if(data.status==='ok'){
-      const hasDraft = data.comments && Object.keys(data.comments).length > 0;
-      // 帶回草稿評語
-      if(hasDraft){
-        comments = data.comments;
-        document.getElementById('draftBanner4').style.display='block';
-      }
-      // 帶回草稿教學目標
-      if(data.goals && data.goals.length){
-        goals = data.goals;
-        document.getElementById('draftBanner3').style.display='block';
-      }
-      // 帶回升級考勾選
-      if(data.lt_checks && Object.keys(data.lt_checks).length){
-        ltData = data.lt_checks;
-      }
-      // 有草稿評語：跳過教學目標，直接進學生評語繼續填
-      if(hasDraft && !isLevelTest){
-        setLoading(false);
-        currentStu=0; loadStu(0); show(4);
-        return;
-      }
-    }
-  }catch(e){
-    // 讀不到草稿就從空白開始，不影響使用
-    document.getElementById('draftBanner4').style.display='none';
-    document.getElementById('draftBanner3').style.display='none';
-  }
-  setLoading(false);
+            // Header 顯示邏輯
+            const header = document.getElementById('header-bar');
+            if(screenId === 'screen-game' || screenId === 'screen-card-result') {
+                header.classList.remove('hidden-screen');
+            } else {
+                header.classList.add('hidden-screen');
+            }
+        }
 
-  if(isLevelTest){
-    currentStu=0;loadStu(0);show(4);
-  }else{
-    document.getElementById('clsTitle3').textContent=`${cls}（${book}）`;
-    renderGoals();show(3);
-  }
-}
+        // 渲染選單
+        function renderCategories() {
+            const list = document.getElementById('category-list');
+            list.innerHTML = '';
+            weeks.forEach(week => {
+                const btn = document.createElement('button');
+                // 縮小按鈕的 padding 與高度，讓畫面不再太長
+                btn.className = `btn-cute w-full p-3 md:p-5 rounded-2xl flex items-center border-b-4 ${week.color} text-left`;
+                btn.onclick = () => startWeek(week.id);
+                btn.innerHTML = `
+                    <span class="text-3xl md:text-4xl mr-4 md:mr-5">${week.icon}</span>
+                    <span class="text-lg md:text-2xl font-bold">${week.title}</span>
+                `;
+                list.appendChild(btn);
+            });
+        }
 
-// 目標
-function renderGoals(){
-  const list=document.getElementById('goalList');list.innerHTML='';
-  goals.forEach((g,i)=>{
-    const row=document.createElement('div');row.className='goal-row';
-    row.innerHTML=`<span class="gnum">${i+1}.</span>
-      <div class="gfield">
-        <input type="text" maxlength="44" placeholder="教學目標第${i+1}項（最多44字）" oninput="goals[${i}]=this.value;gc(this,'gc${i}')">
-        <div class="cnt" id="gc${i}">0 / 44 字</div>
-      </div>
-      ${goals.length>1?`<button class="del-g" onclick="delGoal(${i})">×</button>`:''}`;
-    list.appendChild(row);
-    const inp=row.querySelector('input');inp.value=g;gc(inp,'gc'+i);
-  });
-  document.getElementById('addGBtn').style.display=goals.length>=3?'none':'block';
-}
-function gc(el,id){
-  const n=el.value.length,c=document.getElementById(id);if(!c)return;
-  c.textContent=`${n} / 44 字`;c.className='cnt'+(n>40?' warn':'')+(n>=44?' over':'');
-}
-function addGoal(){if(goals.length<3){goals.push('');renderGoals();}}
-function delGoal(i){goals.splice(i,1);renderGoals();}
+        // 打亂陣列工具 (Fisher-Yates Shuffle)
+        function shuffleArray(array) {
+            let curId = array.length;
+            while (0 !== curId) {
+                let randId = Math.floor(Math.random() * curId);
+                curId -= 1;
+                let tmp = array[curId];
+                array[curId] = array[randId];
+                array[randId] = tmp;
+            }
+            return array;
+        }
 
-function goP4(){
-  const valid=goals.filter(g=>g.trim());
-  if(!valid.length){alert('請至少填寫一項教學目標');return;}
-  goals=valid;currentStu=0;loadStu(0);show(4);
-}
+        // 開始選定的周次
+        function startWeek(weekId) {
+            currentWeekId = weekId;
+            
+            // 設定標題
+            const weekInfo = weeks.find(w => w.id === weekId);
+            document.getElementById('week-title').innerText = weekInfo.title;
 
-// 學生
-function stus(){return STUDENTS[curCls]||[];}
+            // 複製並打亂該周題目
+            currentQuestionList = JSON.parse(JSON.stringify(allQuestions[weekId]));
+            //shuffleArray(currentQuestionList); // 讓每次玩的題目順序不同
+            
+            currentQuestionIndex = 0;
+            document.getElementById('total-questions').innerText = currentQuestionList.length;
 
-function loadStu(idx){
-  const list=stus();if(!list.length)return;
-  const[zh,en]=list[idx];
-  document.getElementById('stuName').textContent=zh;
-  document.getElementById('stuEn').textContent=en;
-  document.getElementById('stuProg').textContent=`${idx+1} / ${list.length}`;
-  document.getElementById('progFill').style.width=`${(idx+1)/list.length*100}%`;
-  const ta=document.getElementById('commentTa');
-  ta.value=comments[zh]||'';
-  updateCnt(ta,'cmtCnt',230);
-  document.getElementById('savedTag').style.display='none';
-  document.getElementById('prevBtn').disabled=idx===0;
-  document.getElementById('nextBtn').textContent=idx===list.length-1?'完成，前往簽名 →':'下一位 →';
-  // 修改教學目標按鈕：只在月成績單模式顯示
-  const editBtn=document.getElementById('editGoalBtn');
-  if(editBtn) editBtn.style.display=isLevelTest?'none':'block';
+            // 準備卡片池 (每次新開一局就重置並打亂，保證不重複)
+            availableCards = JSON.parse(JSON.stringify(initialCardsPool));
+            shuffleArray(availableCards);
 
-  const ltSec=document.getElementById('ltSection');
-  if(isLevelTest){
-    ltSec.style.display='block';
-    const ld=ltData[zh]||{checks:[],result:''};
-    ['neat','pronounce','vocab','attitude','express'].forEach(k=>{
-      document.getElementById('chk_'+k).checked=ld.checks.includes(k);
-    });
-    document.querySelectorAll('input[name=ltResult]').forEach(r=>r.checked=false);
-    if(ld.result){const el=document.querySelector(`input[name=ltResult][value="${ld.result}"]`);if(el)el.checked=true;}
-    // 分數
-    const scores=ltScoreData[zh]||{};
-    const sd=document.getElementById('ltScores');
-    sd.innerHTML=Object.keys(scores).length
-      ?Object.entries(scores).map(([k,v])=>{
-          const n=parseFloat(v);const ok=!isNaN(n)&&n>=90;
-          return `<div class="score-item"><span class="s-name">${k}</span><span class="s-val ${ok?'ok':'ng'}">${v}</span></div>`;
-        }).join('')
-      :'<div style="font-size:13px;color:#aeaeb2;padding:.3rem 0">（無分數資料）</div>';
-  }else{ltSec.style.display='none';}
-}
+            loadQuestion();
+            showScreen('screen-game');
+        }
 
-function saveCur(){
-  const[zh]=stus()[currentStu];
-  const val=document.getElementById('commentTa').value.trim();
-  if(val)comments[zh]=document.getElementById('commentTa').value;
-  else delete comments[zh];
-  if(val)document.getElementById('savedTag').style.display='block';
-  if(isLevelTest){
-    const checks=['neat','pronounce','vocab','attitude','express'].filter(k=>document.getElementById('chk_'+k).checked);
-    const res=document.querySelector('input[name=ltResult]:checked');
-    ltData[zh]={checks,result:res?res.value:''};
-  }
-}
+        // 載入題目
+        function loadQuestion() {
+            document.getElementById('result-overlay').classList.add('hidden-screen');
+            document.getElementById('screen-card-result').classList.add('hidden-screen');
+            
+            document.getElementById('question-counter').innerText = currentQuestionIndex + 1;
+            const qData = currentQuestionList[currentQuestionIndex];
+            
+            const qImage = document.getElementById('question-image');
+            const imgContainer = document.getElementById('image-container');
+            if (qData.image && qData.image !== "") {
+                qImage.src = qData.image;
+                imgContainer.classList.remove('hidden');
+            } else {
+                qImage.src = "";
+                imgContainer.classList.add('hidden');
+            }
 
-function moveStu(dir){
-  saveCur();
-  const list=stus();
-  if(dir===1&&currentStu===list.length-1){
-    const missing=list.filter(([zh])=>!comments[zh]||!comments[zh].trim()).map(([zh])=>zh);
-    if(missing.length){
-      // 有未填評語：只能暫存，不能送出
-      alert('以下學生尚未填寫評語，無法送出：\n'+missing.join('、')+'\n\n請填完所有評語後再送出，或按「暫存草稿」儲存進度。');
-      return;
-    }
-    goSig();return;
-  }
-  currentStu=Math.max(0,Math.min(list.length-1,currentStu+dir));
-  loadStu(currentStu);
-}
+            document.getElementById('question-text').innerText = qData.question;
+            
+            // 動態產生選項按鈕 (支援三選一或四選一)
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = ''; // 先清空舊選項
+            
+            const letters = ['A', 'B', 'C', 'D'];
+            const styles = [
+                {bg: 'bg-blue-50 hover:bg-blue-100', text: 'text-blue-900 border-blue-200', icon: 'bg-blue-200 text-blue-800'},
+                {bg: 'bg-pink-50 hover:bg-pink-100', text: 'text-pink-900 border-pink-200', icon: 'bg-pink-200 text-pink-800'},
+                {bg: 'bg-green-50 hover:bg-green-100', text: 'text-green-900 border-green-200', icon: 'bg-green-200 text-green-800'},
+                {bg: 'bg-purple-50 hover:bg-purple-100', text: 'text-purple-900 border-purple-200', icon: 'bg-purple-200 text-purple-800'}
+            ];
 
-// 暫存草稿
-async function saveDraft(){
-  saveCur();
-  const month=document.getElementById('monthVal').value;
-  const payload=JSON.stringify({
-    teacher: curTeacher,
-    month:   month,
-    cls:     curCls,
-    book:    curBook,
-    date:    isLevelTest ? ltDate : '',
-    mode:    isLevelTest ? 'leveltest' : 'monthly',
-    status:  '草稿',
-    goals:   isLevelTest ? [] : goals,
-    comments,
-    lt_checks: isLevelTest ? ltData : {},
-    sig:     ''
-  });
-  setLoading(true,'暫存中...');
-  try{
-    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:payload});
-  }catch(e){}
-  setLoading(false);
-  showToast('✓ 草稿已暫存');
-  setTimeout(()=>show(2), 800);  // 短暫顯示 toast 後跳回班級選擇
-}
+            qData.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = `btn-option w-full ${styles[idx].bg} ${styles[idx].text} border-2 rounded-xl p-3 md:p-4 text-base md:text-xl font-bold text-left transition-colors relative flex items-center`;
+                btn.onclick = () => selectAnswer(idx);
+                btn.innerHTML = `
+                    <span class="${styles[idx].icon} w-8 h-8 md:w-12 md:h-12 md:text-2xl inline-flex flex-shrink-0 items-center justify-center rounded-full mr-4">${letters[idx]}</span>
+                    <span>${opt}</span>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+        }
 
-// 簽名
-function goSig(){buildSummary();show(5);initSig();}
-function backToStu(){
-  show(4);loadStu(currentStu);
-}
+        // 選擇答案
+        function selectAnswer(selectedIndex) {
+            const qData = currentQuestionList[currentQuestionIndex];
+            const isCorrect = (selectedIndex === qData.correctIndex);
+            
+            const overlay = document.getElementById('result-overlay');
+            const resultIcon = document.getElementById('result-icon');
+            const resultTitle = document.getElementById('result-title');
+            const explanationText = document.getElementById('explanation-text');
+            const btnNextWrong = document.getElementById('btn-next-wrong');
+            const chanceFateContainer = document.getElementById('chance-fate-container');
 
-function goEditGoals(){
-  // 暫存目前評語後回到教學目標頁
-  saveCur();
-  show(3);
-}
+            explanationText.innerText = qData.explanation;
 
-function buildSummary(){
-  const month=document.getElementById('monthDisplay').textContent;
-  const total=stus().length;
-  const filled=Object.values(comments).filter(v=>v&&v.trim()).length;
-  document.getElementById('summaryRows').innerHTML=[
-    ['老師',curTeacher+' 老師'],['月份',month],
-    ['班級',`${curCls}（${curBook}）`],
-    ...(!isLevelTest?[['教學目標',goals.length+' 項']]:[] ),
-    ['已填評語',`${filled} / ${total} 位`],
-  ].map(([k,v])=>`<div class="summary-row"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('');
-}
+            // 重新觸發動畫
+            overlay.classList.remove('animate-pop');
+            void overlay.offsetWidth; // trigger reflow
+            overlay.classList.add('animate-pop');
+            overlay.classList.remove('hidden-screen');
 
-function updateCnt(el,id,max){
-  const n=el.value.length,c=document.getElementById(id);
-  c.textContent=`${n} / ${max} 字`;c.className='cnt'+(n>max*.9?' warn':'')+(n>=max?' over':'');
-}
+            if(isCorrect) {
+                resultIcon.innerText = "⭕";
+                resultTitle.innerText = "太棒了！答對啦！";
+                resultTitle.className = "text-3xl md:text-5xl font-black mb-4 md:mb-8 text-green-500";
+                
+                btnNextWrong.classList.add('hidden-screen');
+                chanceFateContainer.classList.remove('hidden-screen');
+            } else {
+                resultIcon.innerText = "❌";
+                resultTitle.innerText = "哎呀！答錯了！";
+                resultTitle.className = "text-3xl md:text-5xl font-black mb-4 md:mb-8 text-red-500";
+                
+                btnNextWrong.classList.remove('hidden-screen');
+                chanceFateContainer.classList.add('hidden-screen');
+            }
+        }
 
-function initSig(){
-  if(sigCtx)return;
-  const cv=document.getElementById('sigC');
-  sigCtx=cv.getContext('2d');sigCtx.strokeStyle='#1d1d1f';sigCtx.lineWidth=3;sigCtx.lineCap='round';sigCtx.lineJoin='round';
-  function pos(e){const r=cv.getBoundingClientRect(),sx=cv.width/r.width,sy=cv.height/r.height;const src=e.touches?e.touches[0]:e;return{x:(src.clientX-r.left)*sx,y:(src.clientY-r.top)*sy};}
-  function dn(e){e.preventDefault();drawing=true;const p=pos(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y);}
-  function mv(e){e.preventDefault();if(!drawing)return;const p=pos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();hasSig=true;document.getElementById('hasSigTag').style.display='inline';}
-  function up(){drawing=false;}
-  cv.addEventListener('mousedown',dn);cv.addEventListener('mousemove',mv);cv.addEventListener('mouseup',up);
-  cv.addEventListener('touchstart',dn,{passive:false});cv.addEventListener('touchmove',mv,{passive:false});cv.addEventListener('touchend',up);
-}
-function clearSig(){if(!sigCtx)return;const cv=document.getElementById('sigC');sigCtx.clearRect(0,0,cv.width,cv.height);hasSig=false;document.getElementById('hasSigTag').style.display='none';}
+        // 抽卡 (機會或命運)
+        function drawCard(type) {
+            // 如果卡片抽完了，重新補充並打亂 (避免當機)
+            if(availableCards.length === 0) {
+                availableCards = JSON.parse(JSON.stringify(initialCardsPool));
+                shuffleArray(availableCards);
+            }
 
-// 送出
-async function submitAll(){
-  if(!hasSig){alert('請先完成手寫簽名');return;}
-  const month=document.getElementById('monthVal').value;
-  const sigData=document.getElementById('sigC').toDataURL('image/png');
-  const payload=JSON.stringify({
-    teacher:  curTeacher,
-    month:    month,
-    cls:      curCls,
-    book:     curBook,
-    date:     isLevelTest ? ltDate : '',
-    mode:     isLevelTest ? 'leveltest' : 'monthly',
-    status:   '已送出',
-    goals:    isLevelTest ? [] : goals,
-    comments,
-    lt_checks: isLevelTest ? ltData : {},
-    sig:      sigData
-  });
-  document.getElementById('submitBtn').disabled=true;
-  document.getElementById('errMsg').style.display='none';
-  setLoading(true,'送出中...');
-  try{
-    // 送出（no-cors 無法確認結果，等待後用 JSONP 驗證）
-    await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:payload});
-    // 等 2 秒讓 Sheet 寫入
-    await new Promise(r=>setTimeout(r,2000));
-    // 用 JSONP 驗證是否有寫入（找這班這月的已送出記錄）
-    let confirmed=false;
-    try{
-      const checkUrl=SCRIPT_URL+'?action=get_draft'
-        +'&teacher='+encodeURIComponent(curTeacher)
-        +'&cls='+encodeURIComponent(curCls)
-        +'&month='+encodeURIComponent(document.getElementById('monthVal').value);
-      // 改查已送出狀態（get_draft 只查草稿，這裡只要 fetch 沒錯就當成功）
-      confirmed=true;
-    }catch(e){ confirmed=true; } // 無法驗證就樂觀假設成功
-    setLoading(false);
-    if(confirmed){
-      doneCls.add(curCls);
-      const total=stus().length;
-      const filled=Object.values(comments).filter(v=>v&&v.trim()).length;
-      document.getElementById('successDetail').textContent=curCls+'（'+curBook+'）已送出 '+filled+'/'+total+' 份評語';
-      renderRemainCls();
-      show(6);
-      hasSig=false;sigCtx=null;
-      document.getElementById('submitBtn').disabled=false;
-    }
-  }catch(e){
-    setLoading(false);
-    document.getElementById('submitBtn').disabled=false;
-    document.getElementById('errMsg').textContent='送出時發生錯誤，請檢查網路後重試';
-    document.getElementById('errMsg').style.display='block';
-  }
-}
+            // 抽出一張卡 (從陣列尾部拿)
+            const card = availableCards.pop();
 
-function renderRemainCls(){
-  const remain=document.getElementById('remainClsList');
-  remain.innerHTML='';
-  (TEACHER_CLASSES[curTeacher]||[]).filter(([cls])=>!doneCls.has(cls)).forEach(([cls,book])=>{
-    const btn=document.createElement('button');
-    btn.className='cls-btn';
-    btn.innerHTML=`<div><div class="cls-name">${cls}</div><div class="cls-book">${book}</div></div><span class="cls-arrow">›</span>`;
-    btn.onclick=()=>selectCls(cls,book);
-    remain.appendChild(btn);
-  });
-  if(!remain.children.length){
-    remain.innerHTML='<div style="text-align:center;color:#30d158;font-size:14px;padding:.75rem">🎉 所有班級都已完成！</div>';
-  }
-}
+            // 準備卡片畫面
+            const cardScreen = document.getElementById('screen-card-result');
+            document.getElementById('card-type-title').innerText = type + "卡";
+            document.getElementById('card-desc').innerText = card.text;
+            
+            // 設定分數顯示顏色與文字
+            const scoreDisplay = document.getElementById('card-score');
+            if(card.score > 0) {
+                scoreDisplay.innerText = "+" + card.score + " 分";
+                scoreDisplay.className = "text-3xl md:text-5xl font-black mt-4 md:mt-6 text-green-500";
+            } else if (card.score < 0) {
+                scoreDisplay.innerText = card.score + " 分";
+                scoreDisplay.className = "text-3xl md:text-5xl font-black mt-4 md:mt-6 text-red-500";
+            } else {
+                scoreDisplay.innerText = "0 分";
+                scoreDisplay.className = "text-3xl md:text-5xl font-black mt-4 md:mt-6 text-gray-500";
+            }
 
-updateStepBar();
-</script>
+            cardScreen.classList.remove('hidden-screen');
+        }
+
+        // 進入下一題或結算
+        function nextQuestion() {
+            currentQuestionIndex++;
+            
+            if(currentQuestionIndex < currentQuestionList.length) {
+                loadQuestion();
+            } else {
+                endGame();
+            }
+        }
+
+        // 遊戲結束結算
+        function endGame() {
+            document.getElementById('screen-card-result').classList.add('hidden-screen');
+            showScreen('screen-end');
+        }
+
+        // 回主選單
+        function backToMenu() {
+            showScreen('screen-select');
+        }
+
+    </script>
 </body>
 </html>
